@@ -1,7 +1,10 @@
-API_TOKEN = "5751416719:AAE3qCgK6zeKs9YL0sKe9y1UOyedpcxm4tk"
+API_TOKEN = "6165041763:AAH28sJQtbPs-rk35yaE5UtVn-84knK4OkA"
 
 commands = ['/start', '/song', '/artist', '/setlang',
-            '/settings', '/my', '/users', '/newpost', '/category']
+            '/settings', '/my', '/users', '/newpost', '/category',
+            '/add', '/comp', '/winners', '/info', '/remove'
+]
+
 CATEGORIES = {
     1:"Afrobeat",
     2:"Hip Hop",

@@ -36,18 +36,15 @@ async def start_message(message: aiogram.types.Message):
             "last_urls_page": "",
             "urls": "",
             "without_formating": "",
-            "hearts_buttons": "On",
-
+            "hearts_buttons": "On"
         }
         update_users_write()
-
 
 @dp.message_handler(commands = ['song'])
 async def search_by_song_title(message: aiogram.types.Message):
     config.search_field = "title"
     await message.reply(
         messages.song_messages[users[message.from_user.id]['language']])
-
 
 @dp.message_handler(
     lambda message: message.text not in config.commands and not message.text.startswith("/"))

@@ -32,7 +32,7 @@ class Keyboards:
         }
 
         try:
-            keyboards[f"song_select_{self.user_id}"] = types.InlineKeyboardMarkup(
+            keyboards[f"song_select_{self.user_id}"] = types.InlineKeyboardMarkup(row_width=len(buttons))
         except KeyError:
 
             keyboards[f"song_select_{self.user_id}"] = types.InlineKeyboardMarkup(
