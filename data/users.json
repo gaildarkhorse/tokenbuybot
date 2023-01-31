@@ -5,5 +5,19 @@
         "show_hearts": "On",
         "show_audio_format": "On",
         "results_count": "10"
+    },
+    "5011624700": {
+        "language": "EN",
+        "show_bitrate": "On",
+        "show_hearts": "On",
+        "show_audio_format": "On",
+        "results_count": "10",
+        "favourites_list": [],
+        "last_list": "",
+        "last_page": "",
+        "last_urls_page": "",
+        "urls": "",
+        "without_formating": "",
+        "hearts_buttons": "On"
     }
 }

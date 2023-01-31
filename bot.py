@@ -11,58 +11,59 @@ bot = aiogram.Bot(token = config.API_TOKEN,
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
+status = ""
 users = {}
+chain = ""
+token = "1234"
 
-@dp.callback_query_handler(lambda call: call.data in ("to_left", "close", "to_right"))
-async def change_page(call: aiogram.types.CallbackQuery):
-    user_lang = users[call.from_user.id]['language']  # Язык пользователя
-    # Последний список песен для пользователя
-    user_list_now = users[call.from_user.id]["last_list"]
-    # Последний список ссылок на песни
-    user_link_list_now = users[call.from_user.id]["urls"]
-    # Последняя просмотренная страница
-    last_page = users[call.from_user.id]["last_page"]
-    if call.data == "to_left":  # Листать влево
-        if users[call.from_user.id]["last_page"] == 0:
-            await bot.answer_callback_query(call.id,
-                                            messages.you_in_first_page_message[
-                                                user_lang])  # Вы уже на первой странице
+@dp.message_handler(commands = ['remove'])
+async def help_message(message: aiogram.types.Message):
+    print(message["from"]["first_name"], message["text"])
+    keyb = keyboards.Keyboards().remove()
+    await bot.send_message(message.chat.id, messages.remove_confirm_message, reply_to_message_id=message.message_id,reply_markup = keyb)
 
-        else:
-            keyb = keyboards.Keyboards().for_songs_list(
-                user_link_list_now[users[call.from_user.id]["last_page"] - 1],
-                call.message.chat.id, int(users[call.from_user.id]["results_count"]))
+@dp.message_handler(commands = ['help'])
+async def help_message(message: aiogram.types.Message):
+    print(message["from"]["first_name"], message["text"])
+    await bot.send_message(message.chat.id, messages.help_message,reply_to_message_id=message.message_id)
+    
+@dp.message_handler(commands = ['start'])
+async def start_message(message: aiogram.types.Message):
+    await help_message(message)
 
-            users[call.from_user.id]["last_page"] -= 1
-            await bot.edit_message_text(chat_id = call.message.chat.id,
-                                        text = messages.number_page_message[user_lang].format(
-                                            users[call.from_user.id]["last_page"] + 1, len(user_list_now)) +
-                                               "\n".join(
-                                                   user_list_now[users[call.from_user.id]["last_page"]]),
-                                        message_id = call.message.message_id,
-                                        reply_markup = keyb)
-
-    elif call.data == "to_right":  # Листать вправо
-        if users[call.from_user.id]["last_page"] == len(user_list_now) - 1:
-            await bot.answer_callback_query(call.id,
-                                            messages.nothing_messages[user_lang])  # Ничего не нашлось
-        else:
-            keyb = keyboards.Keyboards().for_songs_list(
-                user_link_list_now[users[call.from_user.id]["last_page"] + 1],
-                call.message.chat.id, int(users[call.from_user.id]["results_count"]))
-
-            users[call.from_user.id]["last_page"] += 1
-            await bot.edit_message_text(chat_id = call.message.chat.id,
-                                        text = messages.number_page_message[user_lang].format(
-                                            users[call.from_user.id]["last_page"] + 1, len(user_list_now)) +
-                                               "\n".join(
-                                                   user_list_now[users[call.from_user.id]["last_page"]]),
-                                        message_id = call.message.message_id,
-                                        reply_markup = keyb)
-    elif call.data == "close":
-        await bot.delete_message(call.message.chat.id, call.message.message_id)
+@dp.message_handler(commands = ['settings'])
+async def change_settings(message: aiogram.types.Message):
+    """Меню настроек"""
+    setting_keyb = keyboards.Keyboards().settings(users[message.from_user.id]['language'],
+                                                             users[message.from_user.id
+                                                             ]['results_count'],
+                                                             users[message.from_user.id]['hearts_buttons'])
+    await bot.send_message(message.chat.id,
+                           messages.settings_menu[users[message.from_user.id]['language']],
+                           reply_markup = setting_keyb)
+    
+@dp.message_handler(commands = ['add'])
+async def search_for_artist_name(message: aiogram.types.Message):
+    """Искать по артисту"""
+    print("/add")    
+    setting_keyb = keyboards.Keyboards().select_chain(users[message.from_user.id]['language'],
+                                                             users[message.from_user.id
+                                                             ]['results_count'],
+                                                             users[message.from_user.id]['hearts_buttons'])
+    await bot.send_message(message.chat.id,
+                           messages.select_chain_menu[users[message.from_user.id]['language']],
+                           reply_markup = setting_keyb)
 
 
+
+  
+@dp.callback_query_handler(lambda call: call.data == "remove_token")
+async def remove_token(call: aiogram.types.CallbackQuery):
+    if token != "":
+        await bot.send_message(call.message.chat.id, messages.remove_done_message[0])
+    await bot.send_message(call.message.chat.id, messages.remove_done_message[1])
+    
+        
 @dp.callback_query_handler(
     lambda call: call.data.startswith("select") and call.data.split("_")[1] not in ("ru", "en", "es"))
 async def select_sound(call: aiogram.types.CallbackQuery):
@@ -105,32 +106,6 @@ async def change_language(message: aiogram.types.Message):
 
     await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
 
-@dp.message_handler(commands = ['remove'])
-async def user_playlist(message: aiogram.types.Message):
-    user_lang = users[message.from_user.id]['language']
-    playlist = users[message.from_user.id]['favourites_list']
-    users[message.from_user.id]["playlist_page"] = 0
-
-    if not playlist:
-        await bot.send_message(message.chat.id, messages.no_playlist[user_lang])
-
-    else:
-        users[message.from_user.id]["playlist_page"] = 0
-        f = lambda A, n=int(users[message.from_user.id]['results_count']): [
-            A[i:i + n] for i in range(0, len(A), n)]
-        cut_playlist = f(playlist)
-
-        keyb = keyboards.Keyboards().for_user_playlist(
-            cut_playlist[users[message.from_user.id]["playlist_page"]],
-            message.chat.id, int(users[message.from_user.id]["results_count"]))
-        user_playlist = []
-        i = 1
-        for item in cut_playlist[0]:
-            for key, val in item.items():
-                user_playlist.append(f"{i}. {key}")
-                i += 1
-
-        await bot.send_message(message.chat.id, '\n'.join(user_playlist), reply_markup = keyb)
 
 
 @dp.callback_query_handler(lambda call: call.data == "to_right_playlist")
@@ -281,67 +256,4 @@ if __name__ == "__main__":
     update_users_read()
     
     aiogram.executor.start_polling(dp, skip_updates = True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@dp.message_handler(commands = ['start'])
-async def start_message(message: aiogram.types.Message):
-    print("/start")
-    if message.from_user.id in users.keys():
-        start_message_lang = messages.start_messages[users[
-            message.from_user.id]['language']]
-        await bot.send_message(message.chat.id, start_message_lang)
-
-    elif message.from_user.id not in users.keys():
-        keyb = keyboards.Keyboards().select_lang()
-        await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
-        users[message.from_user.id] = {
-            "language": "EN",
-            "show_bitrate": "On",
-            "show_hearts": "On",
-            "show_audio_format": "On",
-            "results_count": "10",
-            "favourites_list": [],
-            "last_list": "",
-            "last_page": "",
-            "last_urls_page": "",
-            "urls": "",
-            "without_formating": "",
-            "hearts_buttons": "On"
-        }
-        update_users_write()
-
-@dp.message_handler(commands = ['settings'])
-async def change_settings(message: aiogram.types.Message):
-    """Меню настроек"""
-    setting_keyb = keyboards.Keyboards().settings(users[message.from_user.id]['language'],
-                                                             users[message.from_user.id
-                                                             ]['results_count'],
-                                                             users[message.from_user.id]['hearts_buttons'])
-    await bot.send_message(message.chat.id,
-                           messages.settings_menu[users[message.from_user.id]['language']],
-                           reply_markup = setting_keyb)
-    
-@dp.message_handler(commands = ['add'])
-async def search_for_artist_name(message: aiogram.types.Message):
-    """Искать по артисту"""
-    print("/add")    
-    setting_keyb = keyboards.Keyboards().select_chain(users[message.from_user.id]['language'],
-                                                             users[message.from_user.id
-                                                             ]['results_count'],
-                                                             users[message.from_user.id]['hearts_buttons'])
-    await bot.send_message(message.chat.id,
-                           messages.select_chain_menu[users[message.from_user.id]['language']],
-                           reply_markup = setting_keyb)
     

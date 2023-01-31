@@ -1,5 +1,37 @@
 # START MESSAGES-------------------------------------------------------------------------
 
+help_message="""
+Welcome to Buy Bot Tech 
+
+- I am a Buy-Bot that features Trending (@tokenbuycompetitionbot) and customizable games
+
+- To begin, make me an Admin @tokenbuycompetitionbot in your Group
+
+- Type /add to start tracking your coin
+
+- Type /settings to show all available easy to use settings
+
+- Go Premium/Ad-Free by going to Premium Settings
+
+- Attach your telegram link by going to group settings
+
+- Type /comp to view the current buy contest leaderboard
+
+- Type /winners to view all previous buy contests winners and add TXN as proof of payment
+
+- Type /info to view current token info and links
+
+- Type /remove to clear settings and competitions and remove the token from chat
+
+- MARKETING: @tokenbuycompetitionbot
+"""
+
+remove_confirm_message = """
+❔Are you sure remove all settings, competitions and token from chat?
+"""
+
+
+remove_done_message=["✅Token and competition settings removed from chat. You can use /add command to add token to chat. To get help use /help","❌ No token added to chat yet"]
 
 start_messages = {
     "RU": """

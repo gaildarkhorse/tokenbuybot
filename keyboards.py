@@ -230,6 +230,16 @@ class Keyboards:
 
         return keyboards['lang_buttons']
 
+    def remove(self):
+        keyboards['remove'] = types.InlineKeyboardMarkup()
+
+        removebtn = types.InlineKeyboardButton(
+            text="➡️ YES! Remove Token", callback_data=f"remove_token")   
+        
+        keyboards['remove'].row(removebtn)
+
+        return keyboards['remove']
+    
     def settings(self, lang, count, button_status):
         self.lang = lang
         self.count = count
