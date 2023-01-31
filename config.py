@@ -1,8 +1,6 @@
 API_TOKEN = "6165041763:AAH28sJQtbPs-rk35yaE5UtVn-84knK4OkA"
 
-commands = ['/start', '/song', '/artist', '/setlang',
-            '/settings', '/my', '/users', '/newpost', '/category',
-            '/add', '/comp', '/winners', '/info', '/remove'
+commands = ['/start', '/add', '/comp', '/winners', '/info', '/remove'
 ]
 
 CATEGORIES = {

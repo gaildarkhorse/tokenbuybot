@@ -13,102 +13,6 @@ dp = aiogram.Dispatcher(bot, loop = loop)
 
 users = {}
 
-
-@dp.message_handler(commands = ['start'])
-async def start_message(message: aiogram.types.Message):
-    if message.from_user.id in users.keys():
-        start_message_lang = messages.start_messages[users[
-            message.from_user.id]['language']]
-        await bot.send_message(message.chat.id, start_message_lang)
-
-    elif message.from_user.id not in users.keys():
-        keyb = keyboards.Keyboards().select_lang()
-        await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
-        users[message.from_user.id] = {
-            "language": "EN",
-            "show_bitrate": "On",
-            "show_hearts": "On",
-            "show_audio_format": "On",
-            "results_count": "10",
-            "favourites_list": [],
-            "last_list": "",
-            "last_page": "",
-            "last_urls_page": "",
-            "urls": "",
-            "without_formating": "",
-            "hearts_buttons": "On"
-        }
-        update_users_write()
-
-@dp.message_handler(commands = ['song'])
-async def search_by_song_title(message: aiogram.types.Message):
-    config.search_field = "title"
-    await message.reply(
-        messages.song_messages[users[message.from_user.id]['language']])
-
-@dp.message_handler(
-    lambda message: message.text not in config.commands and not message.text.startswith("/"))
-async def search_song(message: aiogram.types.Message):
-    global number_page_message, you_in_first_page
-    print("user",message.from_user.id)
-    if not message.from_user.id in users.keys():
-        print("unknown user",message.from_user.id)
-        # keyb = keyboards.Keyboards().select_lang()
-        # await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
-        users[message.from_user.id] = {
-            "language": "EN",
-            "show_bitrate": "On",
-            "show_hearts": "On",
-            "show_audio_format": "On",
-            "results_count": "10",
-            "favourites_list": [],
-            "last_list": "",
-            "last_page": "",
-            "last_urls_page": "",
-            "urls": "",
-            "without_formating": "",
-            "hearts_buttons": "On",
-
-        }
-        update_users_write()
-        start_message_lang = messages.start_messages[users[
-            message.from_user.id]['language']]
-        await bot.send_message(message.chat.id, start_message_lang)
-        return
-    song_list, urls_list, without_formating = SongsDownloader(
-        f"{message.text}").get_songs_list(int(users[message.from_user.id]['results_count']))
-    you_in_first_page = messages.you_in_first_page_message[users[
-        message.from_user.id]['language']]
-    number_page_message = messages.number_page_message[users[
-        message.from_user.id]['language']]
-
-    if song_list == False:
-        await bot.send_message(message.chat.id,
-                               messages.nothing_messages[users[message.from_user.id]['language']])
-    elif not song_list and not urls_list:
-        pass
-    else:
-        users[message.from_user.id
-        ]["without_formating"] = without_formating
-        # Списки ссылок на песни
-        users[message.from_user.id]["urls"] = urls_list
-        users[message.from_user.id
-        ]["last_list"] = song_list  # Списки песен
-        users[message.from_user.id]["last_page"] = 0  # Последняя страница
-        # Последний список ссылок на песни
-        users[message.from_user.id]["last_urls_page"] = "0"
-        list_len = len(users[message.from_user.id]
-                       ["last_list"])  # Длинна списка
-
-        keyb = keyboards.Keyboards().for_songs_list(urls_list[0],
-                                                               message.chat.id,
-                                                               int(users[message.from_user.id]["results_count"]))
-
-        await bot.send_message(message.chat.id, number_page_message.format("1",
-                                                                           str(list_len)) + '\n'.join(song_list[0]),
-                               reply_markup = keyb)
-
-
 @dp.callback_query_handler(lambda call: call.data in ("to_left", "close", "to_right"))
 async def change_page(call: aiogram.types.CallbackQuery):
     user_lang = users[call.from_user.id]['language']  # Язык пользователя
@@ -180,90 +84,28 @@ async def select_sound(call: aiogram.types.CallbackQuery):
                                caption = '<a href="https://t.me/Oxkingofchamps">🎧Oxkingofchamps©</a>',protect_content=True, reply_markup = keyb)
 
 
-@dp.callback_query_handler(lambda call: call.data in ["like", "unlike"])
-async def like_or_unlike(call: aiogram.types.CallbackQuery):
-    user_lang = users[call.from_user.id]['language']
-
-    if call.data == "like":
-        users[call.from_user.id]["favourites_list"].append(
-            {call.message.audio.title: call.message.audio.file_id})
-        users[call.from_user.id]["last_list"] = ""
-        users[call.from_user.id]["last_urls_list"] = ""
-        users[call.from_user.id]["urls"] = ""
-        users[call.from_user.id]["without_formating"] = ""
-        update_users_write()
-        await bot.answer_callback_query(call.id, messages.add_to_favourite[user_lang])
-    elif call.data == "unlike":
-
-        for item in users[call.from_user.id]["favourites_list"]:
-            for key in item.keys():
-                if key == call.message.audio.title:
-                    song = users[call.from_user.id
-                    ]["favourites_list"].index(item)
-                    del users[call.from_user.id]["favourites_list"][song]
-        await bot.answer_callback_query(call.id, messages.del_from_favourite[user_lang])
-        users[call.from_user.id]["last_list"] = ""
-        users[call.from_user.id]["last_urls_list"] = ""
-        users[call.from_user.id]["urls"] = ""
-        users[call.from_user.id]["without_formating"] = ""
-        update_users_write()
-
-
-@dp.callback_query_handler(lambda call: call.data in ["select_ru", "select_en", "select_es"])
-async def select_lang(call: aiogram.types.CallbackQuery):
-    if call.data == "select_ru":
-        users[call.from_user.id]['language'] = "RU"
-    if call.data == "select_en":
-        users[call.from_user.id]['language'] = "EN"
-    if call.data == "select_es":
-        users[call.from_user.id]['language'] = "ES"
-    users[call.from_user.id]["last_list"] = ""
-    users[call.from_user.id]["last_urls_list"] = ""
-    users[call.from_user.id]["urls"] = ""
-    users[call.from_user.id]["without_formating"] = ""
-    update_users_write()
-    start_message_lang = messages.start_messages[users[
-        call.from_user.id]['language']]
-    await bot.send_message(call.message.chat.id, start_message_lang)
-
-
-@dp.message_handler(commands = ['artist'])
+@dp.message_handler(commands = ['comp'])
 async def search_for_artist_name(message: aiogram.types.Message):
     """Искать по артисту"""
     config.search_field = "artist"
     await message.reply(
         messages.artist_messages[users[message.from_user.id]['language']])
 
-@dp.message_handler(commands = ['category'])
+@dp.message_handler(commands = ['winners'])
 async def search_for_category_name(message: aiogram.types.Message):
     config.search_field = "category"
     await message.reply(
         messages.category_messages[users[message.from_user.id]['language']])
 
 
-@dp.message_handler(commands = ['setlang'])
+@dp.message_handler(commands = ['info'])
 async def change_language(message: aiogram.types.Message):
     """Изменить язык"""
     keyb = keyboards.Keyboards().select_lang()
 
     await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
 
-
-@dp.message_handler(commands = ['settings'])
-async def change_settings(message: aiogram.types.Message):
-    """Меню настроек"""
-
-    setting_keyb = keyboards.Keyboards().settings(users[message.from_user.id]['language'],
-                                                             users[message.from_user.id
-                                                             ]['results_count'],
-                                                             users[message.from_user.id]['hearts_buttons'])
-
-    await bot.send_message(message.chat.id,
-                           messages.settings_menu[users[message.from_user.id]['language']],
-                           reply_markup = setting_keyb)
-
-
-@dp.message_handler(commands = ['my'])
+@dp.message_handler(commands = ['remove'])
 async def user_playlist(message: aiogram.types.Message):
     user_lang = users[message.from_user.id]['language']
     playlist = users[message.from_user.id]['favourites_list']
@@ -419,11 +261,6 @@ def update_users_write():
     with open('./data/users.json', 'w') as write_users:
         json.dump(users, write_users, ensure_ascii = False, indent = 4)
         
-
-
-
-
-
 def update_users_read():
     global users
     with open("./data/users.json", 'r') as read_users:
@@ -444,3 +281,65 @@ if __name__ == "__main__":
     update_users_read()
     
     aiogram.executor.start_polling(dp, skip_updates = True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@dp.message_handler(commands = ['start'])
+async def start_message(message: aiogram.types.Message):
+    if message.from_user.id in users.keys():
+        start_message_lang = messages.start_messages[users[
+            message.from_user.id]['language']]
+        await bot.send_message(message.chat.id, start_message_lang)
+
+    elif message.from_user.id not in users.keys():
+        keyb = keyboards.Keyboards().select_lang()
+        await bot.send_message(message.chat.id, "Выбери язык\nChoose a language\nElige un idioma", reply_markup = keyb)
+        users[message.from_user.id] = {
+            "language": "EN",
+            "show_bitrate": "On",
+            "show_hearts": "On",
+            "show_audio_format": "On",
+            "results_count": "10",
+            "favourites_list": [],
+            "last_list": "",
+            "last_page": "",
+            "last_urls_page": "",
+            "urls": "",
+            "without_formating": "",
+            "hearts_buttons": "On"
+        }
+        update_users_write()
+
+@dp.message_handler(commands = ['settings'])
+async def change_settings(message: aiogram.types.Message):
+    """Меню настроек"""
+    setting_keyb = keyboards.Keyboards().settings(users[message.from_user.id]['language'],
+                                                             users[message.from_user.id
+                                                             ]['results_count'],
+                                                             users[message.from_user.id]['hearts_buttons'])
+    await bot.send_message(message.chat.id,
+                           messages.settings_menu[users[message.from_user.id]['language']],
+                           reply_markup = setting_keyb)
+    
+@dp.message_handler(commands = ['add'])
+async def search_for_artist_name(message: aiogram.types.Message):
+    """Искать по артисту"""    
+    setting_keyb = keyboards.Keyboards().select_chain(users[message.from_user.id]['language'],
+                                                             users[message.from_user.id
+                                                             ]['results_count'],
+                                                             users[message.from_user.id]['hearts_buttons'])
+    await bot.send_message(message.chat.id,
+                           messages.select_chain_menu[users[message.from_user.id]['language']],
+                           reply_markup = setting_keyb)
+    

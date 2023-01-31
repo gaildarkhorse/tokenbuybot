@@ -144,8 +144,6 @@ change_count_results = {
 
 }
 
-
-
 del_button_with_hearts = {
     "RU": "Убрать кнопки с сердечками: ",
     "EN": "Remove buttons with hearts: ",
@@ -154,6 +152,22 @@ del_button_with_hearts = {
 
 settings_menu = {
     "RU": "Меню настроек",
-    "EN": "Settings menu",
+    "EN": """
+        <b style="color:green;">Tetra Tending Bot Tech</b>
+        <b>⚙️Tetra Tending Bot Tech</b>
+        
+        <i>Buy Bot with Top Trending @TetraTechTrendingBot and Automatic & Customizable Games. (Bot Tracks Cumulative Buys for Biggest Buy Comp)</i>
+        """,
+    "ES": "Menú de configuración"
+}
+
+select_chain_menu = {
+    "RU": "Меню настроек",
+    "EN": """
+        <b style="color:green;">Tetra Tending Bot Tech</b>
+        <b>⚙️Tetra Tending Bot Tech</b>
+        
+       Select Chain
+        """,
     "ES": "Menú de configuración"
 }

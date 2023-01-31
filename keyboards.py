@@ -199,16 +199,34 @@ class Keyboards:
         return keyboards[f"playlist_{self.user_id}"]
 
     def select_lang(self):
-        keyboards['lang_buttons'] = types.InlineKeyboardMarkup(row_width=3)
+        keyboards['lang_buttons'] = types.InlineKeyboardMarkup()
 
-        ru_button = types.InlineKeyboardButton(
-            text="Русский🇷🇺", callback_data=f"select_ru")
-        en_button = types.InlineKeyboardButton(
-            text="English🇬🇧", callback_data=f"select_en")
-        es_button = types.InlineKeyboardButton(
-            text="Español🇪🇸", callback_data=f"select_es")
+        showbuysbtn = types.InlineKeyboardButton(
+            text="❔ Show Buys w/out Comp✅", callback_data=f"select_ru")   
+             
+        gifimagebtn = types.InlineKeyboardButton(
+            text="✅Gif/Image", callback_data=f"select_ru")
+        minbuybtn = types.InlineKeyboardButton(
+            text="⏫Min Buy $1", callback_data=f"select_ru")
+        
+        buyemojibtn = types.InlineKeyboardButton(
+            text="🟢Buy Emoji", callback_data=f"select_en")
+        buystepbtn = types.InlineKeyboardButton(
+            text="💲Buy Step $1", callback_data=f"select_es")
 
-        keyboards['lang_buttons'].row(es_button, ru_button, en_button)
+        tokengroupPrefBtn = types.InlineKeyboardButton(
+            text="⚙️Token & Group Preferences", callback_data=f"select_es")
+                
+        bigbuycompbtn = types.InlineKeyboardButton(
+            text="Big Buy Comp⏩", callback_data=f"select_es")        
+        lastbuycompbtn = types.InlineKeyboardButton(
+            text="Last Buy Comp⏩", callback_data=f"select_es")
+        
+        keyboards['lang_buttons'].row(showbuysbtn)
+        keyboards['lang_buttons'].row(gifimagebtn, minbuybtn)
+        keyboards['lang_buttons'].row(buyemojibtn, buystepbtn)
+        keyboards['lang_buttons'].row(tokengroupPrefBtn)
+        keyboards['lang_buttons'].row(bigbuycompbtn, lastbuycompbtn)
 
         return keyboards['lang_buttons']
 
@@ -219,25 +237,49 @@ class Keyboards:
 
         keyboards['settings'] = types.InlineKeyboardMarkup()
 
-        change_lang = types.InlineKeyboardButton(
-            text=messages.change_language[self.lang], callback_data=f"change_lang")
+        showbuysbtn = types.InlineKeyboardButton(
+            text="❔ Show Buys w/out Comp✅", callback_data=f"select_ru")   
+             
+        gifimagebtn = types.InlineKeyboardButton(
+            text="✅Gif/Image", callback_data=f"select_ru")
+        minbuybtn = types.InlineKeyboardButton(
+            text="⏫Min Buy $1", callback_data=f"select_ru")
+        
+        buyemojibtn = types.InlineKeyboardButton(
+            text="🟢Buy Emoji", callback_data=f"select_en")
+        buystepbtn = types.InlineKeyboardButton(
+            text="💲Buy Step $1", callback_data=f"select_es")
 
-        change_lang = types.InlineKeyboardButton(
-            text=messages.change_language[self.lang], callback_data=f"change_lang")
-        change_lang = types.InlineKeyboardButton(
-            text=messages.change_language[self.lang], callback_data=f"change_lang")
-        change_lang = types.InlineKeyboardButton(
-            text=messages.change_language[self.lang], callback_data=f"change_lang")        
+        tokengroupPrefBtn = types.InlineKeyboardButton(
+            text="⚙️Token & Group Preferences", callback_data=f"select_es")
+                
+        bigbuycompbtn = types.InlineKeyboardButton(
+            text="Big Buy Comp⏩", callback_data=f"select_es")        
+        lastbuycompbtn = types.InlineKeyboardButton(
+            text="Last Buy Comp⏩", callback_data=f"select_es")
 
-        count_result = types.InlineKeyboardButton(
-            text=messages.change_count_results[self.lang]+str(self.count), callback_data=f"count_result")
-        heart_buttons = types.InlineKeyboardButton(
-            text=messages.del_button_with_hearts[self.lang]+self.button_status, callback_data=f"heart_buttons")
-        close = types.InlineKeyboardButton(text="❌", callback_data=f"close")
-
-        keyboards['settings'].add(change_lang)
-        keyboards['settings'].add(count_result)
-        keyboards['settings'].add(heart_buttons)
-        keyboards['settings'].add(close)
+        keyboards['settings'].add(showbuysbtn)
+        keyboards['settings'].add(gifimagebtn, minbuybtn)
+        keyboards['settings'].add(buyemojibtn, buystepbtn)
+        keyboards['settings'].add(tokengroupPrefBtn)
+        keyboards['settings'].add(bigbuycompbtn, lastbuycompbtn)
 
         return keyboards['settings']
+
+    def select_chain(self, lang, count, button_status):
+        self.lang = lang
+        self.count = count
+        self.button_status = button_status
+
+        keyboards['select_chain'] = types.InlineKeyboardMarkup()
+
+        ethBTn = types.InlineKeyboardButton(
+            text="Ethereum (ETH)", callback_data=f"select_ru")   
+             
+        bscBtn = types.InlineKeyboardButton(
+            text="Binance Smart Chain (BSC)", callback_data=f"select_es")
+                
+        keyboards['select_chain'].add(ethBTn)
+        keyboards['select_chain'].add(bscBtn)
+
+        return keyboards['select_chain']
