@@ -1,4 +1,5 @@
-API_TOKEN = "6165041763:AAH28sJQtbPs-rk35yaE5UtVn-84knK4OkA"
+# API_TOKEN = "6165041763:AAH28sJQtbPs-rk35yaE5UtVn-84knK4OkA"
+API_TOKEN = "6044909495:AAGwaZ1Otnx49AkcPS5tNT5Wii66URkLYBk"
 
 commands = ['/start', '/add', '/comp', '/winners', '/info', '/remove'
 ]

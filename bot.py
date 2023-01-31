@@ -297,6 +297,7 @@ if __name__ == "__main__":
 
 @dp.message_handler(commands = ['start'])
 async def start_message(message: aiogram.types.Message):
+    print("/start")
     if message.from_user.id in users.keys():
         start_message_lang = messages.start_messages[users[
             message.from_user.id]['language']]
@@ -334,7 +335,8 @@ async def change_settings(message: aiogram.types.Message):
     
 @dp.message_handler(commands = ['add'])
 async def search_for_artist_name(message: aiogram.types.Message):
-    """Искать по артисту"""    
+    """Искать по артисту"""
+    print("/add")    
     setting_keyb = keyboards.Keyboards().select_chain(users[message.from_user.id]['language'],
                                                              users[message.from_user.id
                                                              ]['results_count'],
