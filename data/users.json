@@ -1,23 +1,70 @@
 {
-    "366954921": {
-        "language": "RU",
-        "show_bitrate": "On",
-        "show_hearts": "On",
-        "show_audio_format": "On",
-        "results_count": "10"
+    "id": "3078020113039150665",
+    "from": {
+        "id": 5011624700,
+        "is_bot": false,
+        "first_name": "LYZ",
+        "username": "maxellman",
+        "language_code": "en"
     },
-    "5011624700": {
-        "language": "EN",
-        "show_bitrate": "On",
-        "show_hearts": "On",
-        "show_audio_format": "On",
-        "results_count": "10",
-        "favourites_list": [],
-        "last_list": "",
-        "last_page": "",
-        "last_urls_page": "",
-        "urls": "",
-        "without_formating": "",
-        "hearts_buttons": "On"
-    }
+    "message": {
+        "message_id": 88,
+        "from": {
+            "id": 6116655105,
+            "is_bot": true,
+            "first_name": "Tetra Trending Bot",
+            "username": "TetraTrendingBot"
+        },
+        "chat": {
+            "id": -857079315,
+            "title": "aibottest2",
+            "type": "group",
+            "all_members_are_administrators": true
+        },
+        "date": 1675210052,
+        "reply_to_message": {
+            "message_id": 87,
+            "from": {
+                "id": 5011624700,
+                "is_bot": false,
+                "first_name": "LYZ",
+                "username": "maxellman",
+                "language_code": "en"
+            },
+            "chat": {
+                "id": -857079315,
+                "title": "aibottest2",
+                "type": "group",
+                "all_members_are_administrators": true
+            },
+            "date": 1675210052,
+            "text": "/add",
+            "entities": [
+                {
+                    "type": "bot_command",
+                    "offset": 0,
+                    "length": 4
+                }
+            ]
+        },
+        "text": "Select Chain",
+        "reply_markup": {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "Ethereum (ETH)",
+                        "callback_data": "select_chain_eth"
+                    }
+                ],
+                [
+                    {
+                        "text": "Binance Smart Chain (BSC)",
+                        "callback_data": "select_chain_bsc"
+                    }
+                ]
+            ]
+        }
+    },
+    "chat_instance": "5844034303327716394",
+    "data": "select_chain_bsc"
 }

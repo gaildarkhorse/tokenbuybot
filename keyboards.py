@@ -12,7 +12,7 @@ class Keyboards:
 
         self.keyboards = keyboards
 
-    def for_songs_list(self, list_page, user_id, count):
+    def pairs(self, comp):
         self.list_page = list_page
         self.user_id = user_id
         self.count = count
@@ -240,11 +240,7 @@ class Keyboards:
 
         return keyboards['remove']
     
-    def settings(self, lang, count, button_status):
-        self.lang = lang
-        self.count = count
-        self.button_status = button_status
-
+    def settings(self):
         keyboards['settings'] = types.InlineKeyboardMarkup()
 
         showbuysbtn = types.InlineKeyboardButton(
@@ -276,20 +272,13 @@ class Keyboards:
 
         return keyboards['settings']
 
-    def select_chain(self, lang, count, button_status):
-        self.lang = lang
-        self.count = count
-        self.button_status = button_status
-
+    def select_chain(self):
         keyboards['select_chain'] = types.InlineKeyboardMarkup()
-
-        ethBTn = types.InlineKeyboardButton(
-            text="Ethereum (ETH)", callback_data=f"select_ru")   
-             
+        ethBtn = types.InlineKeyboardButton(
+            text="Ethereum (ETH)", callback_data=f"select_chain_eth")   
         bscBtn = types.InlineKeyboardButton(
-            text="Binance Smart Chain (BSC)", callback_data=f"select_es")
+            text="Binance Smart Chain (BSC)", callback_data=f"select_chain_bsc")
                 
-        keyboards['select_chain'].add(ethBTn)
+        keyboards['select_chain'].add(ethBtn)
         keyboards['select_chain'].add(bscBtn)
-
         return keyboards['select_chain']

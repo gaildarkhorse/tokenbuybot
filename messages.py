@@ -137,50 +137,7 @@ number_page_message = {
     "RU": "<b>Страница {0} из {1}</b>\n\n",
     "EN": "<b>Page {0} of {1}</b>\n\n",
     "ES": "<b>Página {0} de {1}</b>\n\n"}
-# NUMBER PAGE END--------------------------------------------------------------------------------
-
-add_to_favourite = {
-    "RU": "Добавлено в Ваш плейлист",
-    "EN": "Add to your playlist",
-    "ES": "Agregado a tu lista de reproducción."}
-
-
-del_from_favourite = {
-    "RU": "Песня убрана из Вашего плейлиста",
-    "EN": "Song was delete from your playlist",
-    "ES": "La canción ha sido eliminada de tu lista de reproducción."}
-
-
-no_playlist = {
-    "RU": "Ваш плейлист еще пуст...",
-    "EN": "Your playlist is still empty...",
-    "ES": "Tu lista de reproducción aún está vacía..."}
-
-
-select_language = {
-    "RU": "Выбери язык",
-    "EN": "Choose a language",
-    "ES": "Elige un idioma"}
-
-
-change_language = {
-    "RU": "Выбери язык",
-    "EN": "Choose a language",
-    "ES": "Elige un idioma"
-}
-
-change_count_results = {
-    "RU": "Количество результатов: ",
-    "EN": "Number of results: ",
-    "ES": "Número de resultados: "
-
-}
-
-del_button_with_hearts = {
-    "RU": "Убрать кнопки с сердечками: ",
-    "EN": "Remove buttons with hearts: ",
-    "ES": "Quitar botones con corazones: "
-}
+# NUMBER PAGE END-------------------------------------------------------------------------------
 
 settings_menu = {
     "RU": "Меню настроек",
@@ -193,13 +150,40 @@ settings_menu = {
     "ES": "Menú de configuración"
 }
 
-select_chain_menu = {
-    "RU": "Меню настроек",
-    "EN": """
-        <b style="color:green;">Tetra Tending Bot Tech</b>
-        <b>⚙️Tetra Tending Bot Tech</b>
-        
-       Select Chain
-        """,
-    "ES": "Menú de configuración"
-}
+select_chain_menu = "Select Chain"
+token_address_question="Token address?"
+
+initialcompvalue = {
+            "status":"",
+            "chain": "",
+            "token_address": "",
+            "token_name":"",
+            "alt_token_name":"",
+            "pair_address": "",
+            "show_buys_w/out_comp": "with",
+            "gif_image": "1.png",
+            "buy_emoji": "😄",
+            "min_buy": 10,
+            "buy_step": 5,
+            "token_group_pref":{
+                "group_link":"",
+                "notify_whale_buy":"on",
+                "selected_chart":"",
+                "circulating_supply":""
+            },
+            "ongoing":"off",
+            "comp_type":"",
+            "big_buy_comp": {
+                "length":3,
+                "min_buy":0.1,
+                "must_hold":1,
+                "prize":[0,0,0],
+                "start_time":0
+            },
+            "last_buy_comp":{
+                "countdown":3,
+                "min_buy":0.1,
+                "prize":0,
+                "must_hold":1
+            }
+        }
