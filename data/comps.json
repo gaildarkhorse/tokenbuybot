@@ -1,9 +1,9 @@
 {
     "-857079315": {
-        "status": "wait_token_address",
-        "chain": "BSC",
-        "token_address": "",
-        "token_name": "",
+        "status": "",
+        "chain": "ETH",
+        "token_address": "0x2df5f68db45ad4f153ce2b1447589d8c17d1306e",
+        "token_name": "BMI",
         "alt_token_name": "",
         "pair_address": "",
         "show_buys_w/out_comp": "with",

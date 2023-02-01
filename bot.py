@@ -21,7 +21,7 @@ comps ={}
 def verify_token_address(addr):
     return addr.startswith("0x") and len(addr[2:])==40 and all(c in string.hexdigits for c in addr[2:].lower())
 def if_init(gid):
-    print(comps.keys())
+    # print(comps.keys())
     if gid not in comps.keys():
         comps[gid] = messages.initialcompvalue
         update_comps_write()
@@ -132,7 +132,7 @@ async def select_chain(call: aiogram.types.CallbackQuery):
     await bot.send_message(gid,"➡️["+chain+"]"+messages.token_address_question)
     comps[gid]["status"] = "wait_token_address"
     comps[gid]["chain"] = chain
-    print(call["from"]["first_name"], chain + " selected")
+    print(gid, call["from"]["first_name"], chain + " selected")
     update_comps_write()
 
 

@@ -34,12 +34,12 @@ class BotAPI:
         self.token_symbol = ""
         self.pairs = []
         params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
-        print(params)
-        print(json.dumps(params, indent = 4))
+        # print(params)
+        # print(json.dumps(params, indent = 4))
         self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
 
         res = self.response.json()
-        print("get_pairs_response:", res)
+        # print("get_pairs_response:", res)
         if self.response.status_code == 200:
             try:
                 if res["code"]==0: self.pairs = res["pairs"]
