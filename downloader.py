@@ -4,7 +4,7 @@ import requests
 import time
 import urllib3
 import config
-import os
+import os,json
 # from mutagen.mp3 import MP3
 
 # def mutagen_length(path):
@@ -31,16 +31,18 @@ class BotAPI:
         self.pairs = []
 
     def get_tokeninfo(self):
+        self.token_symbol = ""
         self.pairs = []
-        params = {'groupId':self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
+        params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         print(params)
-        self.response = self.r.post("https://blocktestingto.com/api/monitoringgroup/getPairs",  data=params, verify=False)
-        print("finished")
-        print("get_pairs_response:", self.response.json())
+        print(json.dumps(params, indent = 4))
+        self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
+
+        res = self.response.json()
+        print("get_pairs_response:", res)
         if self.response.status_code == 200:
             try:
-                for item in self.response.json()['data']:
-                    pass
+                if res["code"]==0: self.pairs = res["pairs"]
             except KeyError:
                 print("get_pairs : data error")
         else:

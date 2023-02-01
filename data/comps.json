@@ -1,9 +1,47 @@
 {
-    "5011624700": {
+    "-857079315": {
         "status": "wait_token_address",
         "chain": "BSC",
         "token_address": "",
         "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "with",
+        "gif_image": "1.png",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "on",
+            "selected_chart": "",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "",
+        "big_buy_comp": {
+            "length": 3,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0,
+                0,
+                0
+            ],
+            "start_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0,
+            "must_hold": 1
+        }
+    },
+    "5011624700": {
+        "status": "",
+        "chain": "BSC",
+        "token_address": "0x2df5f68db45ad4f153ce2b1447589d8c17d1306e",
+        "token_name": "BMI",
         "alt_token_name": "",
         "pair_address": "",
         "show_buys_w/out_comp": "with",

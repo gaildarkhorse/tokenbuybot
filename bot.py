@@ -30,7 +30,7 @@ def reset_status(gid):
     update_comps_write()
     
 @dp.message_handler(commands = ['remove'])
-async def help_message(message: aiogram.types.Message):
+async def remove_message(message: aiogram.types.Message):
     keyb = keyboards.Keyboards().remove()
     gid = message.chat.id
     if_init(gid)
@@ -64,7 +64,7 @@ async def change_settings(message: aiogram.types.Message):
                            reply_markup = setting_keyb)
     
 @dp.message_handler(commands = ['add'])
-async def add(message: aiogram.types.Message):
+async def add_message(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
@@ -83,14 +83,17 @@ async def handle_input(message: aiogram.types.Message):
     
     gid = message.chat.id
     if_init(gid)
-    
-    
     print(gid,message.from_user.first_name, message.text)
     if comps[gid]["status"] == "wait_token_address":
         if verify_token_address(message.text):
             comps[gid]["token_address"] = message.text.strip()
-            bot_api = BotAPI(gid,comps[gid]).get_tokeninfo()
-            keyb = keyboards.Keyboards().pairs(comps[gid]["chain"],comps[gid]["token_address"])
+            pairs = BotAPI(gid,comps[gid]).get_tokeninfo()
+            num_pairs = len(pairs)
+            
+            if num_pairs > 0:
+                token_name = pairs[0]["name"].split("/")[0]
+                comps[gid]["token_name"] = token_name
+            keyb = keyboards.Keyboards().select_pair(pairs)
             await message.reply("ℹ️Select Pair Listed Below",reply_markup=keyb)
         else:
             comps[gid]["token_address"] = ""
