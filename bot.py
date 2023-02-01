@@ -9,6 +9,7 @@ import string
 import requests
 import time
 import urllib3
+from datetime import datetime
 
 bot = aiogram.Bot(token = config.API_TOKEN,
                   parse_mode = aiogram.types.ParseMode.HTML)
@@ -192,23 +193,24 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
     if c_data == "start":
         if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
             await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
-        elif comps[gid]['ongoing']=='on':
-            await bot.send_message(gid, "❌Another buy competition already started")
+        # elif comps[gid]['ongoing']=='on':
+        #     await bot.send_message(gid, "❌Another buy competition already started")
         else:
             comps[gid]['ongoing'] = 'on'
+            comps[gid]['comp_type'] = 'big_buy_comp'
+            alt_token_name = comps[gid]['alt_token_name']
+            comp_data = comps[gid]['big_buy_comp']
+            await bot.send_message(gid, "⏳Biggest buy competition starting...\nℹ️Waiting for the next block to start competiton")
+            start_time =  datetime.now().strftime("%H:%M:%S %Z")
+            t1 = time.time()
+            res = BotAPI(gid, comps[gid]).start()
+            elapsed_t = time.time() -t1
+            # print(elapsed_t)
+            remain_t = comp_data['length']*60-elapsed_t
+            endin_time = [int(remain_t/60), int(remain_t) % 60] 
             image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
             await bot.send_photo(gid, image_fn,
-            """ Biggest Buy Competition Started
-
-            Start at 15:35:00 UTC
-            Ends in 29 min 23 sec
-            Minimum Buy 0.10 BNB
-
-            Winning Prize 1 BNB (2nd 0.05 BNB) 
-            Winner must hold at least 1 hours
-
-            Chart  Events  Trending")
-            """)
+            f"🎉Biggest Buy Competition Started\n\n🕓 Start at `{start_time} UTC`\n⏳Ends in `{endin_time[0]}`min `{endin_time[1]}`sec\n⏫Minimum Buy `{comp_data['min_buy']}{alt_token_name}`\n\n💰Winning Prize `{comp_data['prize'][0]}`{alt_token_name} *(2nd* `{comp_data['prize'][1]}`*{alt_token_name})*🚀\n💎Winner must hold at least `{comp_data['must_hold']}` hours\n\n📊[Chart](https://{comps[gid]['token_group_pref']['selected_chart']}/token/{comps[gid]['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
     reset_status(gid)
 
 

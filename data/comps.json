@@ -1,13 +1,13 @@
 {
-    "-857079315": {
+    "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x2df5f68db45ad4f153ce2b1447589d8c17d1306e",
-        "token_name": "BMI",
+        "token_address": "0xE7C8f3d8422C185Fd49d9fcC0b72F1D5d8614a44",
+        "token_name": "DOD",
         "alt_token_name": "BNB",
-        "pair_address": "0x1bc5456f1967862B01Ea6Affda64c3D0a4D288f2",
-        "show_buys_w/out_comp": "off",
-        "gif_image": "1.png",
+        "pair_address": "0x2343c427177286E99e54166edEB420d9a8c911B6",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
         "buy_step": 5,
@@ -18,7 +18,7 @@
             "circulating_supply": ""
         },
         "ongoing": "on",
-        "comp_type": "",
+        "comp_type": "big_buy_comp",
         "big_buy_comp": {
             "length": 3,
             "min_buy": 0.1,

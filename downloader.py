@@ -39,10 +39,11 @@ class BotAPI:
         self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
 
         
-        # print("get_pairs_response:", res)
+        print("get_pairs_response:", self.response)
         if self.response.status_code == 200:
             try:
                 res = self.response.json()
+                print(res)
                 if res["code"]==0: self.pairs = res["pairs"]
             except KeyError:
                 print("get_pairs : data error")
@@ -53,10 +54,17 @@ class BotAPI:
     def stop(self):
         params = {'groupId':self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         self.response = self.r.post("https://blocktestingto.com/api/monitoringgroup/stop", data=params, verify=False)
-        print("stop_response:", self.response.json())
         if self.response.status_code == 200:
             return True
         return False
+    
+    def start(self):
+        g_data = self.data
+        params = {"groupId":self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]], "compType":g_data["comp_type"], "pairAddress":g_data["pair_address"], "tokenName":g_data['token_name'], "altTokenName":g_data['alt_token_name'], "compInfo":g_data[g_data['comp_type']]}
+        print(params)
+        self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/start",  data=params , verify=False)
+        print("start_response:", self.response)
+
     
     def download_song(self, link):
         self.link = link

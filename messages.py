@@ -161,14 +161,14 @@ initialcompvalue = {
             "alt_token_name":"",
             "pair_address": "",
             "show_buys_w/out_comp": "off",
-            "gif_image": "1.png",
+            "gif_image": "0.jpg",
             "buy_emoji": "😄",
             "min_buy": 10,
             "buy_step": 5,
             "token_group_pref":{
                 "group_link":"",
                 "notify_whale_buy":"off",
-                "selected_chart":"",
+                "selected_chart":"poocoin",
                 "circulating_supply":""
             },
             "ongoing":"off",
