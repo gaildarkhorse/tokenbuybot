@@ -15,7 +15,7 @@ bot = aiogram.Bot(token = config.API_TOKEN,
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
-bot_name = "Tetra Trending Bot"
+
 comps ={}
 
 def verify_token_address(addr):
@@ -28,7 +28,19 @@ def if_init(gid):
 def reset_status(gid):
     comps[gid]["status"] = ""
     update_comps_write()
-    
+
+def get_settings_menuvalue(setting, gid):
+    caption = f"⚙️{messages.bot_name}\n\n<i>Buy Bot with Top Trending @BuyBotTrending and Automatic & Customizable Games. (Bot Tracks Cumulative Buys for Biggest Buy Comp)</i>"
+    if setting == "buybot":
+        keyb = keyboards.Keyboards().settings_buybot(comps[gid])
+    elif setting == "buycomp":
+        keyb = keyboards.Keyboards().settings_buycomp(comps[gid])
+    elif setting == "lastcomp":
+        keyb = keyboards.Keyboards().settings_lastcomp(comps[gid])
+
+    comps[gid]['status']=""
+    return caption, keyb
+
 @dp.message_handler(commands = ['remove'])
 async def remove_message(message: aiogram.types.Message):
     keyb = keyboards.Keyboards().remove()
@@ -57,19 +69,19 @@ async def change_settings(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
-
-    setting_keyb = keyboards.Keyboards().settings()
-    await bot.send_message(message.chat.id,
-                           messages.settings_menu,
-                           reply_markup = setting_keyb)
+    c,k = get_settings_menuvalue("buybot",gid)
+    await bot.send_message(gid, c, reply_markup=k)
     
 @dp.message_handler(commands = ['add'])
 async def add_message(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
-    
-    print(gid,message.from_user.first_name, message.text) 
+    print(gid,message.from_user.first_name, message.text)
+    if comps[gid]['token_address'] and comps[gid]['token_name']:
+        await bot.send_message(gid, f"❗️ Bot already in use in this group for token\n{comps[gid]['token_address']}")
+        return
+     
     keyb = keyboards.Keyboards().select_chain()
     await bot.send_message(message.chat.id,
                            messages.select_chain_menu,
@@ -115,14 +127,109 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     else:
         await bot.send_message(gid, messages.remove_done_message[1])
     comps[gid]["token_address"] = ""
+    comps[gid]["token_name"] = ""
+    comps[gid]["alt_token_name"] = ""
     comps[gid]["pair_address"] = ""
     comps[gid]["chain"] = ""
     comps[gid]["ongoing"] = "off"
     reset_status(gid)
-    BotAPI(gid).stop()
+    if comps[gid]["ongoing"]=="on":BotAPI(gid,comps[gid]).stop()
+
+@dp.callback_query_handler(lambda call: call.data.startswith("pair") and len(call.data.split("_"))==4)
+async def select_pair(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
     
-   
-        
+    print(gid,call.message.from_user.first_name, call.message.text)
+    c_data = call.data.split("_")
+    token_name = c_data[2].split("/")[0]
+    alt_token_name = c_data[2].split("/")[1]
+    pair_address = c_data[3]
+    if not comps[gid]["token_name"]:
+        await bot.send_message(gid, "❌Pair not found")
+    elif comps[gid]["token_name"] != token_name:
+        await bot.send_message(gid, f"❗️ Bot already in use in this group for token\n{comps[gid]['token_address']}")
+    else:    
+        comps[gid]["token_name"] = token_name
+        comps[gid]["alt_token_name"] = alt_token_name
+        comps[gid]["pair_address"] = pair_address
+        keyb = keyboards.Keyboards().select_settings_menu()
+        await bot.send_message(gid, f"✅{token_name}({comps[gid]['chain']}) added to <b>{messages.bot_name}!</b>\n\n<i>Attach Your Telegram by selecting “Portal or Group Link” to make it clickable if you Trend at @BuyBotTrending!</i>", reply_markup=keyb, reply_to_message_id=call.message.message_id)
+    reset_status(gid)
+
+@dp.callback_query_handler(lambda call: call.data.startswith("settings_buybot") and len(call.data.split("_"))==3)
+async def settings_buybot(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
+
+    c_data = call.data.split("_")[2]
+    if c_data == "showbuyswithorwithoutcomp":
+        flag = comps[gid]['show_buys_w/out_comp']
+        # print("flag=> ", flag)
+        if flag == "on":
+            flag = "off"
+        else:
+            flag = "on"
+        # print("flag=> ", flag)
+        comps[gid]['show_buys_w/out_comp'] = flag
+        comps[gid]['status'] = ""
+        c, k = get_settings_menuvalue('buybot', gid)
+        await bot.edit_message_reply_markup(gid, call.message.message_id,reply_markup=k)
+    elif c_data == "minbuy":
+        pass
+    elif c_data == "bigbuycomp":
+        comps[gid]['status'] = ""
+        c, k = get_settings_menuvalue('buycomp', gid)
+        await bot.edit_message_reply_markup(gid, call.message.message_id,reply_markup=k)
+    update_comps_write()
+
+@dp.callback_query_handler(lambda call: call.data.startswith("settings_buycomp") and len(call.data.split("_"))==3)
+async def settings_buybot(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
+
+    c_data = call.data.split("_")[2]
+    if c_data == "start":
+        if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
+            await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        elif comps[gid]['ongoing']=='on':
+            await bot.send_message(gid, "❌Another buy competition already started")
+        else:
+            comps[gid]['ongoing'] = 'on'
+            image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
+            await bot.send_photo(gid, image_fn,
+            """ Biggest Buy Competition Started
+
+            Start at 15:35:00 UTC
+            Ends in 29 min 23 sec
+            Minimum Buy 0.10 BNB
+
+            Winning Prize 1 BNB (2nd 0.05 BNB) 
+            Winner must hold at least 1 hours
+
+            Chart  Events  Trending")
+            """)
+    reset_status(gid)
+
+
+
+@dp.callback_query_handler(
+    lambda call: call.data.startswith("settings_menu"))
+async def select_settings_menu(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
+    print(gid,call.message.from_user.first_name, call.message.text)
+    c_data = call.data.split('_')[2]
+    if c_data == "grouplink":
+        comps[gid]['status']="wait_grouplink"
+        await bot.send_message(gid,"➡️Send me group or portal link")
+    else:
+        c, k = get_settings_menuvalue(c_data, gid)
+        await bot.edit_message_reply_markup(gid, call.message.message_id,reply_markup=k)
+
+    update_comps_write()
+
+
 @dp.callback_query_handler(
     lambda call: call.data.startswith("select_chain"))
 async def select_chain(call: aiogram.types.CallbackQuery):

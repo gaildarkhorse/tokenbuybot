@@ -63,6 +63,87 @@ class Keyboards:
 
         return keyboards['lang_buttons']
 
+    def select_settings_menu(self):
+        keyboards['settings_menu'] = types.InlineKeyboardMarkup()
+
+        btn1 = types.InlineKeyboardButton(
+            text="🟢Buy Bot Settings", callback_data=f"settings_menu_buybot")   
+             
+        btn2 = types.InlineKeyboardButton(
+            text="#️⃣Portal or Group Link", callback_data=f"settings_menu_grouplink")
+        btn3 = types.InlineKeyboardButton(
+            text="⚙️Buy Competition Settings", callback_data=f"settings_menu_bigbuycomp")
+        
+        btn4 = types.InlineKeyboardButton(
+            text="⏱Last Buy Settings", callback_data=f"settings_menu_lastbuycomp")
+        
+        keyboards['settings_menu'].row(btn1)
+        keyboards['settings_menu'].row(btn2)
+        keyboards['settings_menu'].row(btn3)
+        keyboards['settings_menu'].row(btn4)
+
+        return keyboards['settings_menu']
+
+    def settings_buycomp(self,g_data):
+        keyboards['settings_buycomp'] = types.InlineKeyboardMarkup()
+
+        btn1 = types.InlineKeyboardButton(
+            text=f"⏳Length ({g_data['big_buy_comp']['length']} minute)", callback_data=f"settings_buycomp_length")   
+             
+        btn2 = types.InlineKeyboardButton(
+            text=f"#️⃣Min Buy ({g_data['big_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_minbuy")
+        btn3 = types.InlineKeyboardButton(
+            text=f"🥇Prize ({g_data['big_buy_comp']['prize'][0]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize1")
+        
+        btn4 = types.InlineKeyboardButton(
+            text=f"💎Must Hold {g_data['big_buy_comp']['must_hold']} hours)", callback_data=f"settings_buycomp_musthold")
+
+        btn5 = types.InlineKeyboardButton(
+            text=f"🥈2nd Pr. ({g_data['big_buy_comp']['prize'][1]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2")   
+             
+        btn6 = types.InlineKeyboardButton(
+            text=f"🥉3rd Pr. ({g_data['big_buy_comp']['prize'][2]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2") 
+        
+        btn7 = types.InlineKeyboardButton(
+            text=f"🏆Start Biggest Buy Competition!🏆", callback_data=f"settings_buycomp_start")
+        
+        btn8 = types.InlineKeyboardButton(
+            text=f"🔙Go Back to Bot Settings", callback_data=f"settings_buycomp_back")
+        
+        keyboards['settings_buycomp'].row(btn1,btn2)
+        keyboards['settings_buycomp'].row(btn3,btn4)
+        keyboards['settings_buycomp'].row(btn5,btn6)
+        keyboards['settings_buycomp'].row(btn7)
+        keyboards['settings_buycomp'].row(btn8)
+        return keyboards['settings_buycomp']
+
+    def settings_lastcomp(self,g_data):
+        keyboards['settings_lastcomp'] = types.InlineKeyboardMarkup()
+
+        btn1 = types.InlineKeyboardButton(
+            text=f"⏳Countdown ({g_data['last_buy_comp']['countdown']} minutes)", callback_data=f"settings_lastcomp_length")   
+             
+        btn2 = types.InlineKeyboardButton(
+            text=f"#️⃣Minimum Buy ({g_data['last_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_minbuy")
+        btn3 = types.InlineKeyboardButton(
+            text=f"🥇Prize ({g_data['last_buy_comp']['prize']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_prize1")
+        
+        btn4 = types.InlineKeyboardButton(
+            text=f"💎Must Hold {g_data['last_buy_comp']['must_hold']} hours)", callback_data=f"settings_lastcomp_musthold")
+        
+        btn5 = types.InlineKeyboardButton(
+            text=f"🏆Start Last Buy Competition!🏆", callback_data=f"settings_lastcomp_start")
+        
+        btn6 = types.InlineKeyboardButton(
+            text=f"🔙Go Back to Bot Settings", callback_data=f"settings_lastcomp_back")
+        
+        keyboards['settings_lastcomp'].row(btn1)
+        keyboards['settings_lastcomp'].row(btn2)
+        keyboards['settings_lastcomp'].row(btn3,btn4)
+        keyboards['settings_lastcomp'].row(btn5)
+        keyboards['settings_lastcomp'].row(btn6)
+        return keyboards['settings_lastcomp']
+
     def remove(self):
         keyboards['remove'] = types.InlineKeyboardMarkup()
 
@@ -73,37 +154,40 @@ class Keyboards:
 
         return keyboards['remove']
     
-    def settings(self):
-        keyboards['settings'] = types.InlineKeyboardMarkup()
-
+    def settings_buybot(self,g_data):
+        keyboards['settings_buybot'] = types.InlineKeyboardMarkup()
+        on_off_text ={
+            "on":"✅",
+            "off":"🚫",
+        }
         showbuysbtn = types.InlineKeyboardButton(
-            text="❔ Show Buys w/out Comp✅", callback_data=f"select_ru")   
+            text=f"❔ Show Buys w/out Comp{on_off_text[g_data['show_buys_w/out_comp']]}", callback_data=f"settings_buybot_showbuyswithorwithoutcomp")   
              
         gifimagebtn = types.InlineKeyboardButton(
-            text="✅Gif/Image", callback_data=f"select_ru")
+            text=f"✅Gif/Image", callback_data=f"settings_buybot_gif")
         minbuybtn = types.InlineKeyboardButton(
-            text="⏫Min Buy $1", callback_data=f"select_ru")
+            text=f"⏫Min Buy ${g_data['min_buy']}", callback_data=f"settings_buybot_minbuy")
         
         buyemojibtn = types.InlineKeyboardButton(
-            text="🟢Buy Emoji", callback_data=f"select_en")
+            text=f"{g_data['buy_emoji']}Buy Emoji", callback_data=f"settings_buybot_emoji")
         buystepbtn = types.InlineKeyboardButton(
-            text="💲Buy Step $1", callback_data=f"select_es")
+            text=f"💲Buy Step ${g_data['buy_step']}", callback_data=f"settings_buybot_buystep")
 
         tokengroupPrefBtn = types.InlineKeyboardButton(
-            text="⚙️Token & Group Preferences", callback_data=f"select_es")
+            text="⚙️Token & Group Preferences", callback_data=f"settings_buybot_tokengrouppref")
                 
         bigbuycompbtn = types.InlineKeyboardButton(
-            text="Big Buy Comp⏩", callback_data=f"select_es")        
+            text="Big Buy Comp⏩", callback_data=f"settings_buybot_bigbuycomp")        
         lastbuycompbtn = types.InlineKeyboardButton(
-            text="Last Buy Comp⏩", callback_data=f"select_es")
+            text="Last Buy Comp⏩", callback_data=f"settings_buybot_lastbuycomp")
 
-        keyboards['settings'].add(showbuysbtn)
-        keyboards['settings'].add(gifimagebtn, minbuybtn)
-        keyboards['settings'].add(buyemojibtn, buystepbtn)
-        keyboards['settings'].add(tokengroupPrefBtn)
-        keyboards['settings'].add(bigbuycompbtn, lastbuycompbtn)
+        keyboards['settings_buybot'].add(showbuysbtn)
+        keyboards['settings_buybot'].add(gifimagebtn, minbuybtn)
+        keyboards['settings_buybot'].add(buyemojibtn, buystepbtn)
+        keyboards['settings_buybot'].add(tokengroupPrefBtn)
+        keyboards['settings_buybot'].add(bigbuycompbtn, lastbuycompbtn)
 
-        return keyboards['settings']
+        return keyboards['settings_buybot']
 
     def select_chain(self):
         keyboards['select_chain'] = types.InlineKeyboardMarkup()

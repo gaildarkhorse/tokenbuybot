@@ -152,7 +152,7 @@ settings_menu = {
 
 select_chain_menu = "Select Chain"
 token_address_question="Token address?"
-
+bot_name = "Tetra Trending Bot"
 initialcompvalue = {
             "status":"",
             "chain": "",
@@ -160,14 +160,14 @@ initialcompvalue = {
             "token_name":"",
             "alt_token_name":"",
             "pair_address": "",
-            "show_buys_w/out_comp": "with",
+            "show_buys_w/out_comp": "off",
             "gif_image": "1.png",
             "buy_emoji": "😄",
             "min_buy": 10,
             "buy_step": 5,
             "token_group_pref":{
                 "group_link":"",
-                "notify_whale_buy":"on",
+                "notify_whale_buy":"off",
                 "selected_chart":"",
                 "circulating_supply":""
             },
