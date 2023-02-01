@@ -1,11 +1,11 @@
 # START MESSAGES-------------------------------------------------------------------------
 
 help_message="""
-Welcome to Buy Bot Tech 
+Welcome to Tetra Trending Bot 
 
-- I am a Buy-Bot that features Trending (@tokenbuycompetitionbot) and customizable games
+- I am a Buy-Bot that features Trending (@TetraTrendingBot) and customizable games
 
-- To begin, make me an Admin @tokenbuycompetitionbot in your Group
+- To begin, make me an Admin @TetraTrendingBot in your Group
 
 - Type /add to start tracking your coin
 
@@ -23,7 +23,7 @@ Welcome to Buy Bot Tech
 
 - Type /remove to clear settings and competitions and remove the token from chat
 
-- MARKETING: @tokenbuycompetitionbot
+- MARKETING: @TetraTrendingBot
 """
 
 remove_confirm_message = """
@@ -168,7 +168,7 @@ initialcompvalue = {
             "token_group_pref":{
                 "group_link":"",
                 "notify_whale_buy":"off",
-                "selected_chart":"poocoin",
+                "selected_chart":"PooCoin",
                 "circulating_supply":""
             },
             "ongoing":"off",
@@ -177,13 +177,13 @@ initialcompvalue = {
                 "length":3,
                 "min_buy":0.1,
                 "must_hold":1,
-                "prize":[0,0,0],
+                "prize":[1,0.2,0.1],
                 "start_time":0
             },
             "last_buy_comp":{
                 "countdown":3,
                 "min_buy":0.1,
-                "prize":0,
+                "prize":1,
                 "must_hold":1
             }
         }

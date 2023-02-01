@@ -31,38 +31,6 @@ class Keyboards:
         
         return keyboards['pair_buttons']
 
-    def select_lang(self):
-        keyboards['lang_buttons'] = types.InlineKeyboardMarkup()
-
-        showbuysbtn = types.InlineKeyboardButton(
-            text="❔ Show Buys w/out Comp✅", callback_data=f"select_ru")   
-             
-        gifimagebtn = types.InlineKeyboardButton(
-            text="✅Gif/Image", callback_data=f"select_ru")
-        minbuybtn = types.InlineKeyboardButton(
-            text="⏫Min Buy $1", callback_data=f"select_ru")
-        
-        buyemojibtn = types.InlineKeyboardButton(
-            text="🟢Buy Emoji", callback_data=f"select_en")
-        buystepbtn = types.InlineKeyboardButton(
-            text="💲Buy Step $1", callback_data=f"select_es")
-
-        tokengroupPrefBtn = types.InlineKeyboardButton(
-            text="⚙️Token & Group Preferences", callback_data=f"select_es")
-                
-        bigbuycompbtn = types.InlineKeyboardButton(
-            text="Big Buy Comp⏩", callback_data=f"select_es")        
-        lastbuycompbtn = types.InlineKeyboardButton(
-            text="Last Buy Comp⏩", callback_data=f"select_es")
-        
-        keyboards['lang_buttons'].row(showbuysbtn)
-        keyboards['lang_buttons'].row(gifimagebtn, minbuybtn)
-        keyboards['lang_buttons'].row(buyemojibtn, buystepbtn)
-        keyboards['lang_buttons'].row(tokengroupPrefBtn)
-        keyboards['lang_buttons'].row(bigbuycompbtn, lastbuycompbtn)
-
-        return keyboards['lang_buttons']
-
     def select_settings_menu(self):
         keyboards['settings_menu'] = types.InlineKeyboardMarkup()
 
@@ -83,6 +51,43 @@ class Keyboards:
         keyboards['settings_menu'].row(btn4)
 
         return keyboards['settings_menu']
+
+    def settings_tokengroup(self, tokengroup_data):
+        on_off_text ={
+            "on":"✅",
+            "off":"🚫",
+        }
+        keyboards['settings_tokengroup'] = types.InlineKeyboardMarkup()
+
+        if tokengroup_data["group_link"]=="":
+            caption = "#️⃣Portal or Group Link"
+        else:
+            caption = f"#️⃣{tokengroup_data['group_link']}"
+
+        btn1 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"settings_tokengroup_grouplink")   
+             
+        btn2 = types.InlineKeyboardButton(
+            text=f"{on_off_text[tokengroup_data['notify_whale_buy']]}Notify Whale Buy's", callback_data=f"settings_tokengroup_notifywhalebuy")
+        btn3 = types.InlineKeyboardButton(
+            text=f"📊 Selected Chart: {tokengroup_data['selected_chart']}", callback_data=f"settings_tokengroup_selectedchart")
+        
+        if tokengroup_data['circulating_supply']=="":
+            caption=f"🔄Circulating Supply"
+        else:
+            caption=f"🔄C.Supply: {tokengroup_data['circulating_supply']}"
+        btn4 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"settings_tokengroup_csupply")
+
+        btn5 = types.InlineKeyboardButton(
+            text="🔙Go Back to Bot Settings", callback_data=f"settings_tokengroup_back")
+        
+        keyboards['settings_tokengroup'].row(btn1)
+        keyboards['settings_tokengroup'].row(btn2)
+        keyboards['settings_tokengroup'].row(btn3)
+        keyboards['settings_tokengroup'].row(btn4)
+
+        return keyboards['settings_tokengroup']
 
     def settings_buycomp(self,g_data):
         keyboards['settings_buycomp'] = types.InlineKeyboardMarkup()

@@ -70,6 +70,9 @@ async def change_settings(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
+    if comps[gid]['alt_token_name']=="" or comps[gid]['token_address']=="":
+        await bot.send_message(gid, "Firstly type /add to start tracking your coin", reply_to_message_id=message.message_id)
+        return
     c,k = get_settings_menuvalue("buybot",gid)
     await bot.send_message(gid, c, reply_markup=k)
     
@@ -111,6 +114,13 @@ async def handle_input(message: aiogram.types.Message):
         else:
             comps[gid]["token_address"] = ""
             await message.reply(f"❌Token address not valid({message.text}). Try again")
+    if comps[gid]["status"] == "wait_grouplink":
+        if not message.text.startswith("https://"):
+            await message.reply(f"❌Link not valid ({message.text}). Try again\nFormat: `https://t.me/mygroup`",parse_mode=aiogram.types.ParseMode().MARKDOWN)
+        else:
+            comps[gid]['token_group_pref']['group_link'] = message.text
+            keyb = keyboards.Keyboards().settings_tokengroup(comps[gid]['token_group_pref'])
+            await message.reply(f"⚙️<b>{messsages.bot_name}</b>\n<i>Attach your Telegram Group Link to make it clickable if you Trend at @BuyBotTrending</i>", reply_markup=keyb)
     
     reset_status(gid)
     
@@ -132,9 +142,9 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     comps[gid]["alt_token_name"] = ""
     comps[gid]["pair_address"] = ""
     comps[gid]["chain"] = ""
+    if comps[gid]["ongoing"]=="on":BotAPI(gid,comps[gid]).stop()
     comps[gid]["ongoing"] = "off"
     reset_status(gid)
-    if comps[gid]["ongoing"]=="on":BotAPI(gid,comps[gid]).stop()
 
 @dp.callback_query_handler(lambda call: call.data.startswith("pair") and len(call.data.split("_"))==4)
 async def select_pair(call: aiogram.types.CallbackQuery):

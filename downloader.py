@@ -33,6 +33,10 @@ class BotAPI:
     def get_tokeninfo(self):
         self.token_symbol = ""
         self.pairs = []
+        if self.data["chain"]=="":
+            print("get_pairs : not initialized")
+            return self.pairs
+        # print(self.data)
         params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         # print(params)
         # print(json.dumps(params, indent = 4))
@@ -52,6 +56,9 @@ class BotAPI:
         return self.pairs
 
     def stop(self):
+        if self.data["chain"]=="":
+            print("stop_comp : not initialized")
+            return False
         params = {'groupId':self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         self.response = self.r.post("https://blocktestingto.com/api/monitoringgroup/stop", data=params, verify=False)
         if self.response.status_code == 200:
