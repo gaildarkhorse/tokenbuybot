@@ -76,7 +76,7 @@ class Keyboards:
         btn2 = types.InlineKeyboardButton(
             text="#️⃣Portal or Group Link", callback_data=f"settings_menu_grouplink")
         btn3 = types.InlineKeyboardButton(
-            text="⚙️Buy Competition Settings", callback_data=f"settings_menu_bigcomp")
+            text="⚙️Buy Competition Settings", callback_data=f"settings_menu_buycomp")
         
         btn4 = types.InlineKeyboardButton(
             text="⏱Last Buy Settings", callback_data=f"settings_menu_lastcomp")

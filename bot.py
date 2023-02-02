@@ -7,7 +7,7 @@ from downloader import BotAPI
 import keyboards
 import string
 import requests
-import time
+import time,schedule
 import urllib3
 from datetime import datetime
 
@@ -18,6 +18,8 @@ dp = aiogram.Dispatcher(bot, loop = loop)
 
 
 comps ={}
+def some_task():
+    print('Hello world')
 
 def verify_token_address(addr):
     return addr.startswith("0x") and len(addr[2:])==40 and all(c in string.hexdigits for c in addr[2:].lower())
@@ -409,8 +411,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         comps[gid]['status']=''
         if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
             await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
-        elif comps[gid]['ongoing']=='on':
-            await bot.send_message(gid, "❌Another buy competition already started")
+        # elif comps[gid]['ongoing']=='on':
+        #     await bot.send_message(gid, "❌Another buy competition already started")
         else:
             comps[gid]['ongoing'] = 'on'
             comps[gid]['comp_type'] = 'big_buy_comp'
@@ -428,6 +430,10 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             start_m = await bot.send_photo(gid, image_fn,
             f"🎉Biggest Buy Competition Started\n\n🕓 Start at `{start_time} UTC`\n⏳Ends in `{endin_time[0]}`min `{endin_time[1]}`sec\n⏫Minimum Buy `{comp_data['min_buy']}{alt_token_name}`\n\n💰Winning Prize `{comp_data['prize'][0]}`{alt_token_name} *(2nd* `{comp_data['prize'][1]}`*{alt_token_name})*🚀\n💎Winner must hold at least `{comp_data['must_hold']}` hours\n\n📊[Chart](https://{comps[gid]['token_group_pref']['selected_chart']}/token/{comps[gid]['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
             await start_m.pin(True)
+            job = schedule.every(1).second.do(some_task)
+            while True:    
+                schedule.run_pending()
+                time.sleep(1)
     update_comps_write()
 
 @dp.callback_query_handler(lambda call: call.data.startswith("settings_lastcomp") and len(call.data.split("_"))==3)
