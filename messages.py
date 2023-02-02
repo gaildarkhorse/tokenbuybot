@@ -153,6 +153,8 @@ settings_menu = {
 select_chain_menu = "Select Chain"
 token_address_question="Token address?"
 bot_name = "Tetra Trending Bot"
+select_chart = f"⚙️<b>{bot_name}</b>\n\nSelect your favorite chart to link on buy posts"
+
 initialcompvalue = {
             "status":"",
             "chain": "",

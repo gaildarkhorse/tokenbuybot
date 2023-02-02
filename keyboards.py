@@ -31,6 +31,42 @@ class Keyboards:
         
         return keyboards['pair_buttons']
 
+    def select_chart(self, s_chart):
+        keyboards['select_chart'] = types.InlineKeyboardMarkup()
+        if s_chart == DexView:
+            caption = "✅DexView"
+        else:
+            caption ="DexView"
+        btn1 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"select_chart_DexView")   
+        if s_chart == "ProofOfX":
+            caption = "✅ProofOfX"
+        else:
+            caption ="ProofOfX"
+        btn2 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"select_chart_ProofOfX")
+        if s_chart == "PooCoin":
+            caption = "✅PooCoin"
+        else:
+            caption ="PooCoin"
+        btn3 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"select_chart_PooCoin")
+        if s_chart == "DexScreener":
+            caption = "✅DexScreener"
+        else:
+            caption ="DexScreener"
+        btn4 = types.InlineKeyboardButton(
+            text=caption, callback_data=f"select_chart_DexScreener")
+        
+        btn5 = types.InlineKeyboardButton(
+            text="🔙Go Back Group & Token Prefs", callback_data=f"select_chart_back")
+        
+        keyboards['select_chart'].row(btn1,btn2)
+        keyboards['select_chart'].row(btn3,btn4)
+        keyboards['select_chart'].row(btn5)
+
+        return keyboards['select_chart']
+
     def select_settings_menu(self):
         keyboards['settings_menu'] = types.InlineKeyboardMarkup()
 
@@ -86,6 +122,7 @@ class Keyboards:
         keyboards['settings_tokengroup'].row(btn2)
         keyboards['settings_tokengroup'].row(btn3)
         keyboards['settings_tokengroup'].row(btn4)
+        keyboards['settings_tokengroup'].row(btn5)
 
         return keyboards['settings_tokengroup']
 
@@ -107,7 +144,7 @@ class Keyboards:
             text=f"🥈2nd Pr. ({g_data['big_buy_comp']['prize'][1]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2")   
              
         btn6 = types.InlineKeyboardButton(
-            text=f"🥉3rd Pr. ({g_data['big_buy_comp']['prize'][2]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2") 
+            text=f"🥉3rd Pr. ({g_data['big_buy_comp']['prize'][2]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize3") 
         
         btn7 = types.InlineKeyboardButton(
             text=f"🏆Start Biggest Buy Competition!🏆", callback_data=f"settings_buycomp_start")

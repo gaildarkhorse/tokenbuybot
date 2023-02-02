@@ -39,7 +39,7 @@ class BotAPI:
         # print(self.data)
         params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         # print(params)
-        # print(json.dumps(params, indent = 4))
+        print(json.dumps(params, indent = 4))
         self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
 
         

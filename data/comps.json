@@ -1,6 +1,6 @@
 {
     "-1001661521028": {
-        "status": "wait_grouplink",
+        "status": "",
         "chain": "BSC",
         "token_address": "0x018aA455F231E76580cB234cA8D8FbF383784061",
         "token_name": "AXN",
@@ -8,17 +8,17 @@
         "pair_address": "0x0344a318353963fa58eE96276092FbF488f9A9D0",
         "show_buys_w/out_comp": "off",
         "gif_image": "0.jpg",
-        "buy_emoji": "😄",
-        "min_buy": 10,
-        "buy_step": 5,
+        "buy_emoji": ":asdfdf:",
+        "min_buy": 2343,
+        "buy_step": 25,
         "token_group_pref": {
-            "group_link": "",
+            "group_link": "https://world.com",
             "notify_whale_buy": "off",
             "selected_chart": "poocoin",
             "circulating_supply": ""
         },
-        "ongoing": "off",
-        "comp_type": "",
+        "ongoing": "on",
+        "comp_type": "big_buy_comp",
         "big_buy_comp": {
             "length": 3,
             "min_buy": 0.1,
