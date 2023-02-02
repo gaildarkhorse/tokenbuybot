@@ -6,73 +6,35 @@
         "token_name": "AXN",
         "alt_token_name": "BNB",
         "pair_address": "0x0344a318353963fa58eE96276092FbF488f9A9D0",
-        "show_buys_w/out_comp": "off",
-        "gif_image": "0.jpg",
-        "buy_emoji": ":asdfdf:",
-        "min_buy": 2343,
-        "buy_step": 25,
-        "token_group_pref": {
-            "group_link": "https://world.com",
-            "notify_whale_buy": "off",
-            "selected_chart": "poocoin",
-            "circulating_supply": ""
-        },
-        "ongoing": "on",
-        "comp_type": "big_buy_comp",
-        "big_buy_comp": {
-            "length": 3,
-            "min_buy": 0.1,
-            "must_hold": 1,
-            "prize": [
-                1,
-                0.2,
-                0.1
-            ],
-            "start_time": 0
-        },
-        "last_buy_comp": {
-            "countdown": 3,
-            "min_buy": 0.1,
-            "prize": 1,
-            "must_hold": 1
-        }
-    },
-    "-1001887932311": {
-        "status": "",
-        "chain": "",
-        "token_address": "",
-        "token_name": "",
-        "alt_token_name": "",
-        "pair_address": "",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
         "buy_step": 5,
         "token_group_pref": {
-            "group_link": "",
-            "notify_whale_buy": "off",
-            "selected_chart": "poocoin",
-            "circulating_supply": ""
+            "group_link": "https://hap.com",
+            "notify_whale_buy": "on",
+            "selected_chart": "DexScreener",
+            "circulating_supply": "999999999999"
         },
         "ongoing": "off",
-        "comp_type": "",
+        "comp_type": "last_buy_comp",
         "big_buy_comp": {
             "length": 3,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
-                1,
+                1.0,
                 0.2,
                 0.1
             ],
             "start_time": 0
         },
         "last_buy_comp": {
-            "countdown": 3,
-            "min_buy": 0.1,
-            "prize": 1,
-            "must_hold": 1
+            "countdown": 34,
+            "min_buy": 0.56,
+            "prize": 1.6,
+            "must_hold": 3
         }
     }
 }

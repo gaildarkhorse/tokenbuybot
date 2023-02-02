@@ -139,17 +139,6 @@ number_page_message = {
     "ES": "<b>Página {0} de {1}</b>\n\n"}
 # NUMBER PAGE END-------------------------------------------------------------------------------
 
-settings_menu = {
-    "RU": "Меню настроек",
-    "EN": """
-        <b style="color:green;">Tetra Tending Bot Tech</b>
-        <b>⚙️Tetra Tending Bot Tech</b>
-        
-        <i>Buy Bot with Top Trending @TetraTechTrendingBot and Automatic & Customizable Games. (Bot Tracks Cumulative Buys for Biggest Buy Comp)</i>
-        """,
-    "ES": "Menú de configuración"
-}
-
 select_chain_menu = "Select Chain"
 token_address_question="Token address?"
 bot_name = "Tetra Trending Bot"

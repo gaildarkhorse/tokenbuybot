@@ -33,7 +33,7 @@ class Keyboards:
 
     def select_chart(self, s_chart):
         keyboards['select_chart'] = types.InlineKeyboardMarkup()
-        if s_chart == DexView:
+        if s_chart == "DexView":
             caption = "✅DexView"
         else:
             caption ="DexView"
@@ -76,10 +76,10 @@ class Keyboards:
         btn2 = types.InlineKeyboardButton(
             text="#️⃣Portal or Group Link", callback_data=f"settings_menu_grouplink")
         btn3 = types.InlineKeyboardButton(
-            text="⚙️Buy Competition Settings", callback_data=f"settings_menu_bigbuycomp")
+            text="⚙️Buy Competition Settings", callback_data=f"settings_menu_bigcomp")
         
         btn4 = types.InlineKeyboardButton(
-            text="⏱Last Buy Settings", callback_data=f"settings_menu_lastbuycomp")
+            text="⏱Last Buy Settings", callback_data=f"settings_menu_lastcomp")
         
         keyboards['settings_menu'].row(btn1)
         keyboards['settings_menu'].row(btn2)
@@ -138,7 +138,7 @@ class Keyboards:
             text=f"🥇Prize ({g_data['big_buy_comp']['prize'][0]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize1")
         
         btn4 = types.InlineKeyboardButton(
-            text=f"💎Must Hold {g_data['big_buy_comp']['must_hold']} hours)", callback_data=f"settings_buycomp_musthold")
+            text=f"💎Must Hold ({g_data['big_buy_comp']['must_hold']} hours)", callback_data=f"settings_buycomp_musthold")
 
         btn5 = types.InlineKeyboardButton(
             text=f"🥈2nd Pr. ({g_data['big_buy_comp']['prize'][1]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2")   
