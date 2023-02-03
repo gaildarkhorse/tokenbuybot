@@ -2,10 +2,10 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x744df267b0c0c0eb6abc3cd3d8d0a145f6e75b9e",
-        "token_name": "SNT",
+        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_name": "Cake",
         "alt_token_name": "BNB",
-        "pair_address": "0xc7110bC950b393631DCE70133D353fCE7a0E45Aa",
+        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
@@ -28,7 +28,7 @@
                 0.1,
                 0.1
             ],
-            "start_time": 1675419001.994358,
+            "start_time": 1675433915.8931422,
             "end_time": 0
         },
         "last_buy_comp": {

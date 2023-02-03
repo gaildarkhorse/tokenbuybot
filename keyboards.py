@@ -17,7 +17,7 @@ class Keyboards:
         button_num = 0
         keyboards['pair_buttons'] = types.InlineKeyboardMarkup()
         if len(pairs) == 0:
-            return False
+            return keyboards['pair_buttons']
 
         for pair in pairs:
             caption = "✅" + pair['name']

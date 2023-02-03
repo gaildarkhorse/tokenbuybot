@@ -16,6 +16,17 @@ bot = aiogram.Bot(token = config.API_TOKEN,
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
+def get_winners_message(winners,alt_token_name,chain,prize1):
+    winner_address = winners[0]['_id'] 
+    win_order_gif ={
+        0:"🥇",
+        1:"🥈",
+        2:"🥉"
+    }
+    for i, winner in enumerate(winners):
+        win_message +=f"\n{win_order_gif[i]}`{winner['_id']}` ➖ `{winner['amount']}{alt_token_name}`"
+    win_message += f"\n\n🎊Congrats to `{winner_address}`wins `{prize1}{alt_token_name}`\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
+    return win_message
 def run_continuously(interval=1):
     """Continuously run, while executing pending jobs at each
     elapsed time interval.
@@ -51,14 +62,19 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
         print(start_time)
 
         r = requests.Session()
-        url = "https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup"#/getLatestEvent"
+        url = "https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup"#/getLatestEvent"
         lengths = {
             "big_buy_comp": "length",
             "last_buy_comp":"countdown"
         }
+        buyer_domain = {
+            "BSC":"bscscan.com",
+            "ETH":"etherscan.io"
+        }
         for gid in comps.keys():
             
             g_data = comps[gid]
+            chain = g_data['chain']
             comp_type = g_data['comp_type']
             comp_info = g_data[comp_type]
             length = comp_info[lengths[comp_type]]
@@ -71,20 +87,33 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             minbuy = comp_info['min_buy']
             alt_token_name = g_data['alt_token_name']
             s_chart = g_data['token_group_pref']['selected_chart']
+            link_track="https://t.me/aiogrambottest2023"
+            link_chart=f"https://poocoin.app/tokens/{token_address}"
+            link_event=f"https://t.me/BuyBotTracker"
             
+            if g_data['show_buys_w/out_comp'] == "on":
+                emoji = g_data['buy_emoji']
+                params = {'groupId':gid}
+                res = r.post(url+"/getLatestEvent",data = params, verify = False)
+                print("get_lastbuy_response:", res)
+                if res.status_code == 200:
+                    try:
+                        res = res.json()
+                        print("get_lastbuy:", res)
+                        buy_info = res["event"]
+                        if bool(buy_info) and int(buy_info['value'])>g_data['min_buy']:
+                            link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
+                            link_txn=buy_info[txn]
+                            
+                            emoji_count = int(buy_info['value'])/g_data['buy_step']
+                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji}*emoji_count\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']}\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href={link_buyer}>{buy_info['buyer_address']}</a>`|`<a href={link_txn}>Txn</a>`|`<a href={link_track}>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
+                            image_fn = open(f"images/{g_data['gif_image']}",'rb')
+                            bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
-            params = {'groupId':gid}
-            res = r.post(url+"/getLatestEvent",data = params, verify = False)
-            print("get_lastbuy_response:", res)
-            if res.status_code == 200:
-                try:
-                    res = res.json()
-                    print("get_lastbuy:", res)
-                    # if res["code"]==0: self.pairs = res["pairs"]
-                except:
-                    print("get_lastbuy : data error")
-            else:
-                print("get_lastbuy : fail")
+                    except KeyError:
+                        print("get_lastbuy : data error")
+                else:
+                    print("get_lastbuy : fail")
 
             if g_data['ongoing'] == 'off':
                 continue
@@ -92,17 +121,23 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 if r_time < 50:
                     g_data["ongoing"] = "off"
                     update_comps_write()
-
+                    prize1 = comp_info['prize'][0]
                     winners_message = "➡️There was no buyer in competition"
                     params = {"groupId": str(gid),"compType": comp_type}
                     res = r.post(url+"/winners",data = params, verify = False)
                     print("get_winners_response: ", res)
                     if res.status_code == 200:
-                        print("get_winners: ", res.json())
+                        try:
+                            res = res.json()
+                            print("get_winners",res)
+                            winners = res['winners']
+                            if len(winners)>0:winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                        except KeyError:
+                            print("get_winners : data error")
 
                     image_fn = open(f"images/{g_data['gif_image']}",'rb')
                     finish_m = await bot.send_photo(gid, image_fn,
-                    f"🏁Biggest Buy Competition Finished\n\n🕓 Start at `{start_time} UTC`\n⏳Ends `{end_time}` UTC\n⏫Minimum Buy `{minbuy}{alt_token_name}`\n\n{winners_message}\n\n📊[Chart](https://poocoin.app/token/{g_data['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
+                    f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends `{end_time}` UTC\n⏫Minimum Buy `{minbuy}{alt_token_name}`\n{winners_message}\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
                     image_fn.close()
                     await finish_m.pin(True)
                     
@@ -383,6 +418,8 @@ async def select_pair(call: aiogram.types.CallbackQuery):
         comps[gid]["token_name"] = token_name
         comps[gid]["alt_token_name"] = alt_token_name
         comps[gid]["pair_address"] = pair_address
+        res = BotAPI(gid, comps[gid]).setSelectedPair()
+        print("setSelectedPair_response ", res)
         keyb = keyboards.Keyboards().select_settings_menu()
         await bot.send_message(gid, f"✅{token_name}({comps[gid]['chain']}) added to <b>{messages.bot_name}!</b>\n\n<i>Attach Your Telegram by selecting “Portal or Group Link” to make it clickable if you Trend at @BuyBotTrending!</i>", reply_markup=keyb, reply_to_message_id=call.message.message_id)
     reset_status(gid)

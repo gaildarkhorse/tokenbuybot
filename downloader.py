@@ -40,8 +40,8 @@ class BotAPI:
         # print(self.data)
         params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
         # print(params)
-        print(json.dumps(params, indent = 4))
-        self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
+        # print(json.dumps(params, indent = 4))
+        self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup/getPairs",  data=params , verify=False)
 
         
         print("get_pairs_response:", self.response)
@@ -49,7 +49,7 @@ class BotAPI:
             try:
                 res = self.response.json()
                 print(res)
-                if res["code"]==0: self.pairs = res["pairs"]
+                self.pairs = res["pairs"]
             except KeyError:
                 print("get_pairs : data error")
         else:
@@ -61,16 +61,23 @@ class BotAPI:
             print("stop_comp : not initialized")
             return False
         params = {'groupId':self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
-        self.response = self.r.post("https://blocktestingto.com/api/monitoringgroup/stop", data=params, verify=False)
+        self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup/stop", data=params, verify=False)
         if self.response.status_code == 200:
             return True
         return False
+    def setSelectedPair(self):
+        params = {'groupId':self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]], "selectedPair":self.data["pair_address"], "alt_token_name": self.data["alt_token_name"]}
+        self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup/setSelectedPair", data=params, verify=False)
+        if self.response.status_code == 200:
+            return True
+        return False
+
     
     def start(self):
         g_data = self.data
         params = {"groupId":self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]], "compType":g_data["comp_type"], "pairAddress":g_data["pair_address"], "tokenName":g_data['token_name'], "altTokenName":g_data['alt_token_name'], "compInfo":g_data[g_data['comp_type']]}
         print(params)
-        self.response = self.r.post("https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup/start",  data=params , verify=False)
+        self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup/start",  data=params , verify=False)
         print("start_response:", self.response)
 
     
