@@ -76,7 +76,7 @@ class BotAPI:
     def start(self):
         g_data = self.data
         params = {"groupId":self.gid,'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]], "compType":g_data["comp_type"], "pairAddress":g_data["pair_address"], "tokenName":g_data['token_name'], "altTokenName":g_data['alt_token_name'], "compInfo":g_data[g_data['comp_type']]}
-        print(params)
+        # print(params)
         self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup/start",  data=params , verify=False)
         print("start_response:", self.response)
 

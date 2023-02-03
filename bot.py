@@ -63,7 +63,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
         print(start_time)
 
         r = requests.Session()
-        url = "https://tetra.tg.api.cryptosnowprince.com/api/monitoringgroup"#/getLatestEvent"
+        url = "https://tetra.tg.api.cryptosnowprince.com/api/buyevent"#/getLatestEvent"
         lengths = {
             "big_buy_comp": "length",
             "last_buy_comp":"countdown"
@@ -103,14 +103,14 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                         res = res.json()
                         print("get_lastbuy:", res)
                         buy_info = res["event"]
-                        if bool(buy_info) and int(buy_info['value'])>g_data['min_buy']:
+                        if bool(buy_info) and int(buy_info['value'])<g_data['min_buy']:
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
-                            link_txn=buy_info[txn]
+                            link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
                             
-                            emoji_count = int(buy_info['value'])/g_data['buy_step']
-                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji}*emoji_count\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']}\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href={link_buyer}>{buy_info['buyer_address']}</a><code>|</code><a href={link_txn}>Txn</a><code>|</code><a href={link_track}>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
+                            emoji_count = int(buy_info['value']/g_data['buy_step'])
+                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji*emoji_count}\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']})\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href='{link_buyer}'>{buy_info['buyer_address'][0:5]}...{buy_info['buyer_address'][-3:]}</a><code>|</code><a href='{link_txn}'>Txn</a><code>|</code><a href='{link_track}'>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
                             image_fn = open(f"images/{g_data['gif_image']}",'rb')
-                            bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
+                            await bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
                     except KeyError:
                         print("get_lastbuy : data error")
@@ -627,7 +627,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name})</i>🚀\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>", parse_mode=aiogram.types.ParseMode.HTML)
             image_fn.close()
             await start_m.pin()
-            print("start_message: ", start_m)
+            # print("start_message: ", start_m)
             # stop_run_continuously = run_continuously()
     update_comps_write()
 

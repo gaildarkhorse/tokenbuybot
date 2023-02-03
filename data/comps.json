@@ -8,14 +8,14 @@
         "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
-        "buy_emoji": "🇨🇽",
+        "buy_emoji": "💓",
         "min_buy": 10,
         "buy_step": 5,
         "token_group_pref": {
-            "group_link": "",
-            "notify_whale_buy": "off",
+            "group_link": "https://pancakeswap.com",
+            "notify_whale_buy": "on",
             "selected_chart": "PooCoin",
-            "circulating_supply": ""
+            "circulating_supply": "13243421"
         },
         "ongoing": "off",
         "comp_type": "big_buy_comp",
@@ -28,7 +28,7 @@
                 0.2,
                 0.1
             ],
-            "start_time": 1675456158.1169858,
+            "start_time": 1675461086.1149206,
             "end_time": 0
         },
         "last_buy_comp": {
