@@ -2,39 +2,43 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x018aA455F231E76580cB234cA8D8FbF383784061",
-        "token_name": "AXN",
+        "token_address": "0x744df267b0c0c0eb6abc3cd3d8d0a145f6e75b9e",
+        "token_name": "SNT",
         "alt_token_name": "BNB",
-        "pair_address": "0x0344a318353963fa58eE96276092FbF488f9A9D0",
+        "pair_address": "0xc7110bC950b393631DCE70133D353fCE7a0E45Aa",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
-        "buy_step": 5,
+        "buy_step": 10,
         "token_group_pref": {
-            "group_link": "https://hap.com",
-            "notify_whale_buy": "on",
-            "selected_chart": "DexScreener",
-            "circulating_supply": "999999999999"
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
         },
-        "ongoing": "on",
+        "ongoing": "off",
         "comp_type": "big_buy_comp",
         "big_buy_comp": {
-            "length": 3,
-            "min_buy": 0.1,
+            "length": 1,
+            "min_buy": 0.005,
             "must_hold": 1,
             "prize": [
-                1.0,
-                0.2,
+                1,
+                0.1,
                 0.1
             ],
-            "start_time": 0
+            "start_time": 1675419001.994358,
+            "end_time": 0
         },
         "last_buy_comp": {
-            "countdown": 34,
-            "min_buy": 0.56,
-            "prize": 1.6,
-            "must_hold": 3
-        }
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 1,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0
+        },
+        "start_time": 1675398531.3299696
     }
 }

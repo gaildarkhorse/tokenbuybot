@@ -19,7 +19,8 @@ import os,json
 urllib3.disable_warnings()
 chainIds={
     "ETH":1,
-    "BSC":56
+    "BSC":56,
+    "BSCTEST":97
 }
 
 class BotAPI:

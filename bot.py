@@ -7,7 +7,7 @@ from downloader import BotAPI
 import keyboards
 import string
 import requests
-import time,schedule
+import time,schedule,threading
 import urllib3
 from datetime import datetime
 
@@ -16,10 +16,115 @@ bot = aiogram.Bot(token = config.API_TOKEN,
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
+def run_continuously(interval=1):
+    """Continuously run, while executing pending jobs at each
+    elapsed time interval.
+    @return cease_continuous_run: threading. Event which can
+    be set to cease continuous run. Please note that it is
+    *intended behavior that run_continuously() does not run
+    missed jobs*. For example, if you've registered a job that
+    should run every minute and you set a continuous run
+    interval of one hour then your job won't be run 60 times
+    at each interval but only once.
+    """
+    cease_continuous_run = threading.Event()
+
+    class ScheduleThread(threading.Thread):
+        @classmethod
+        def run(cls):
+            while not cease_continuous_run.is_set():
+                schedule.run_pending()
+                time.sleep(interval)
+
+    continuous_thread = ScheduleThread()
+    continuous_thread.start()
+    return cease_continuous_run
 
 comps ={}
-def some_task():
-    print('Hello world')
+
+async def get_latest_buyinfo():#message: aiogram.types.Message=None):
+    while 1:
+        await asyncio.sleep(5)
+        # await bot.send_message(-1001661521028, "hhhhh")
+
+        start_time =  datetime.now().strftime("%H:%M:%S")
+        print(start_time)
+
+        r = requests.Session()
+        url = "https://tetrabotapi.cryptosnowprince.com/api/monitoringgroup"#/getLatestEvent"
+        lengths = {
+            "big_buy_comp": "length",
+            "last_buy_comp":"countdown"
+        }
+        for gid in comps.keys():
+            
+            g_data = comps[gid]
+            comp_type = g_data['comp_type']
+            comp_info = g_data[comp_type]
+            length = comp_info[lengths[comp_type]]
+            s_time = comp_info['start_time']
+            e_time = s_time + length*60
+            r_time = e_time - time.time()
+
+            start_time = datetime.utcfromtimestamp(s_time).strftime("%H:%M:%S")
+            end_time = datetime.utcfromtimestamp(e_time).strftime("%H:%M:%S")
+            minbuy = comp_info['min_buy']
+            alt_token_name = g_data['alt_token_name']
+            s_chart = g_data['token_group_pref']['selected_chart']
+            
+
+            params = {'groupId':gid}
+            res = r.post(url+"/getLatestEvent",data = params, verify = False)
+            print("get_lastbuy_response:", res)
+            if res.status_code == 200:
+                try:
+                    res = res.json()
+                    print("get_lastbuy:", res)
+                    # if res["code"]==0: self.pairs = res["pairs"]
+                except:
+                    print("get_lastbuy : data error")
+            else:
+                print("get_lastbuy : fail")
+
+            if g_data['ongoing'] == 'off':
+                continue
+            if comp_type == "big_buy_comp":
+                if r_time < 50:
+                    g_data["ongoing"] = "off"
+                    update_comps_write()
+
+                    winners_message = "➡️There was no buyer in competition"
+                    params = {"groupId": str(gid),"compType": comp_type}
+                    res = r.post(url+"/winners",data = params, verify = False)
+                    print("get_winners_response: ", res)
+                    if res.status_code == 200:
+                        print("get_winners: ", res.json())
+
+                    image_fn = open(f"images/{g_data['gif_image']}",'rb')
+                    finish_m = await bot.send_photo(gid, image_fn,
+                    f"🏁Biggest Buy Competition Finished\n\n🕓 Start at `{start_time} UTC`\n⏳Ends `{end_time}` UTC\n⏫Minimum Buy `{minbuy}{alt_token_name}`\n\n{winners_message}\n\n📊[Chart](https://poocoin.app/token/{g_data['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
+                    image_fn.close()
+                    await finish_m.pin(True)
+                    
+
+            elif comp_type == "last_buy_comp":
+                pass 
+            # await bot.send_message(0,"buy fail")
+        
+
+
+
+async def job():
+    
+    while 1:    
+        print("I'm running on thread %s" % datetime.now().strftime("%H:%M:%S"))
+        text= datetime.now().strftime("%H:%M:%S")
+        await bot.edit_message_text(text,-1001661521028)
+        await asyncio.sleep(1)
+
+def run_threaded(job_func):
+    job_thread = threading.Thread(target=job_func)
+    job_thread.start()
 
 def verify_token_address(addr):
     return addr.startswith("0x") and len(addr[2:])==40 and all(c in string.hexdigits for c in addr[2:].lower())
@@ -45,6 +150,7 @@ def get_settings_menuvalue(setting, gid):
         keyb = keyboards.Keyboards().settings_tokengroup(comps[gid]["token_group_pref"])
     comps[gid]['status']=""
     return caption, keyb
+
 
 @dp.message_handler(commands = ['remove'])
 async def remove_message(message: aiogram.types.Message):
@@ -415,6 +521,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         #     await bot.send_message(gid, "❌Another buy competition already started")
         else:
             comps[gid]['ongoing'] = 'on'
+            comps[gid]['big_buy_comp']['start_time']= time.time()
             comps[gid]['comp_type'] = 'big_buy_comp'
             alt_token_name = comps[gid]['alt_token_name']
             comp_data = comps[gid]['big_buy_comp']
@@ -429,11 +536,9 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
             start_m = await bot.send_photo(gid, image_fn,
             f"🎉Biggest Buy Competition Started\n\n🕓 Start at `{start_time} UTC`\n⏳Ends in `{endin_time[0]}`min `{endin_time[1]}`sec\n⏫Minimum Buy `{comp_data['min_buy']}{alt_token_name}`\n\n💰Winning Prize `{comp_data['prize'][0]}`{alt_token_name} *(2nd* `{comp_data['prize'][1]}`*{alt_token_name})*🚀\n💎Winner must hold at least `{comp_data['must_hold']}` hours\n\n📊[Chart](https://{comps[gid]['token_group_pref']['selected_chart']}/token/{comps[gid]['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
+            image_fn.close()
             await start_m.pin(True)
-            job = schedule.every(1).second.do(some_task)
-            while True:    
-                schedule.run_pending()
-                time.sleep(1)
+            # stop_run_continuously = run_continuously()
     update_comps_write()
 
 @dp.callback_query_handler(lambda call: call.data.startswith("settings_lastcomp") and len(call.data.split("_"))==3)
@@ -546,5 +651,11 @@ def update_comps_read():
 if __name__ == "__main__":
     print("Tetra Trending Bot Started...")
     update_comps_read()
+    # schedule.every(5).seconds.do(get_latest_buyinfo)
+    # # ss = run_continuously(1)
+    # # aiogram.executor.start(dp, job(),)
+    # # asyncio.run(job())
+    loop.create_task(get_latest_buyinfo())
     aiogram.executor.start_polling(dp, skip_updates = True)
+    # loop.run_until_complete(coroutine)
     

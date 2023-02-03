@@ -143,7 +143,10 @@ select_chain_menu = "Select Chain"
 token_address_question="Token address?"
 bot_name = "Tetra Trending Bot"
 select_chart = f"⚙️<b>{bot_name}</b>\n\nSelect your favorite chart to link on buy posts"
-
+chart_links = {
+            "PooCoin":"poocoin.app",
+            "DexView":"www.dexview.com/bsc"
+            }
 initialcompvalue = {
             "status":"",
             "chain": "",
@@ -169,12 +172,15 @@ initialcompvalue = {
                 "min_buy":0.1,
                 "must_hold":1,
                 "prize":[1,0.2,0.1],
-                "start_time":0
+                "start_time":0,
+                "end_time":0
             },
             "last_buy_comp":{
                 "countdown":3,
                 "min_buy":0.1,
                 "prize":1,
-                "must_hold":1
+                "must_hold":1,
+                "start_time":0,
+                "end_time":0
             }
         }

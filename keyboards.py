@@ -237,7 +237,10 @@ class Keyboards:
             text="Ethereum (ETH)", callback_data=f"select_chain_eth")   
         bscBtn = types.InlineKeyboardButton(
             text="Binance Smart Chain (BSC)", callback_data=f"select_chain_bsc")
+        bscTestnetBtn = types.InlineKeyboardButton(
+            text="Binance Smart Chain Testnet(BSC)", callback_data=f"select_chain_bsctest")
                 
         keyboards['select_chain'].add(ethBtn)
         keyboards['select_chain'].add(bscBtn)
+        keyboards['select_chain'].add(bscTestnetBtn)
         return keyboards['select_chain']
