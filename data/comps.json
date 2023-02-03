@@ -17,7 +17,7 @@
             "selected_chart": "PooCoin",
             "circulating_supply": ""
         },
-        "ongoing": "on",
+        "ongoing": "off",
         "comp_type": "last_buy_comp",
         "big_buy_comp": {
             "length": 1,
@@ -36,8 +36,9 @@
             "min_buy": 0.1,
             "prize": 1,
             "must_hold": 1,
-            "start_time": 0,
-            "end_time": 0
+            "start_time": 1675444937.9179459,
+            "end_time": 0,
+            "message_id": 1283
         }
     }
 }

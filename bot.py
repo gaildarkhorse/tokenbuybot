@@ -121,7 +121,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 continue
             if comp_type == "big_buy_comp":
                 if r_time < 0:
-                    g_data["ongoing"] = "off"
+                    comps[gid]["ongoing"] = "off"
                     update_comps_write()
                     prize1 = comp_info['prize'][0]
                     winners_message = "➡️There was no buyer in competition"
@@ -147,7 +147,35 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                     
 
             elif comp_type == "last_buy_comp":
-                pass 
+                r_time = int(r_time)
+                if r_time<=0: r_time=0
+                endin_time = [int(r_time/60), r_time % 60]
+                caption = f"🎉Last Buy Competition (LIVE)\n\n⏳<code>{endin_time[0]}:{endin_time[1]}</code>remaining time!\n⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                await bot.edit_message_text(caption, gid, comp_info['message_id'])
+
+                if r_time==0:
+                    comps[gid]["ongoing"] = "off"
+                    update_comps_write()
+                    prize1 = comp_info['prize']
+                    winners_message ="🙁There is no winner"
+
+                    params = {"groupId": str(gid),"compType": comp_type}
+                    res = r.post(url+"/winners",data = params, verify = False)
+                    print("get_winners_response: ", res)
+                    if res.status_code == 200:
+                        try:
+                            res = res.json()
+                            print("get_winners",res)
+                            winners = res['winners']
+                            if len(winners)>0:winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                        except KeyError:
+                            print("get_winners : data error")
+
+                    caption = f"🎉Last Buy Competition Finished\n\n⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n{winners_message}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    await bot.edit_message_text(caption, gid, comp_info['message_id'])
+                    await bot.forward_message(gid, gid, comp_info['message_id'])
+
+
             # await bot.send_message(0,"buy fail")
         
 
@@ -566,7 +594,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             comps[gid]['comp_type'] = 'big_buy_comp'
             alt_token_name = comps[gid]['alt_token_name']
             comp_data = comps[gid]['big_buy_comp']
-            await bot.send_message(gid, "⏳Biggest buy competition starting...\nℹ️Waiting for the next block to start competiton")
+            await bot.send_message(gid, "⏳Biggest buy competition starting...\n\n<i>ℹ️Waiting for the next block to start competiton</i>")
             start_time =  datetime.now().strftime("%H:%M:%S %Z")
             t1 = time.time()
             res = BotAPI(gid, comps[gid]).start()
@@ -612,15 +640,17 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         comps[gid]['status']=''
         if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
             await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
-        elif comps[gid]['ongoing']=='on':
-            await bot.send_message(gid, "❌Another buy competition already started")
+        # elif comps[gid]['ongoing']=='on':
+        #     await bot.send_message(gid, "❌Another buy competition already started")
+
         else:
             comps[gid]['ongoing'] = 'on'
+            comps[gid]['last_buy_comp']['start_time']= time.time()
             comps[gid]['comp_type'] = 'last_buy_comp'
             alt_token_name = comps[gid]['alt_token_name']
             comp_data = comps[gid]['last_buy_comp']
 
-            await bot.send_message(gid, "⏳Last buy competition starting...\nℹ️Waiting for the next block to start competiton")
+            await bot.send_message(gid, "⏳Last buy competition starting...\n\n<i>ℹ️Waiting for the next block to start competiton</i>")
             start_time =  datetime.now().strftime("%H:%M:%S %Z")
             t1 = time.time()
             res = BotAPI(gid, comps[gid]).start()
@@ -636,6 +666,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             start_m = await bot.send_message(gid,
             f"🎉Last Buy Competition (LIVE)\n\n⏳<code>{endin_time[0]}:{endin_time[1]}</code>remaining time!\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name} 🚀\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
             await start_m.pin()
+            comps[gid]['last_buy_comp']['message_id'] = start_m.message_id
     update_comps_write()
 
 

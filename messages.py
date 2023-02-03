@@ -181,6 +181,7 @@ initialcompvalue = {
                 "prize":1,
                 "must_hold":1,
                 "start_time":0,
-                "end_time":0
+                "end_time":0,
+                "message_id":0
             }
         }
