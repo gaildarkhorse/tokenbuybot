@@ -2,11 +2,53 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x744df267b0c0c0eb6abc3cd3d8d0a145f6e75b9e",
-        "token_name": "SNT",
-        "alt_token_name": "BNB",
-        "pair_address": "0xc7110bC950b393631DCE70133D353fCE7a0E45Aa",
+        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_name": "Cake",
+        "alt_token_name": "USDT",
+        "pair_address": "0xA39Af17CE4a8eb807E076805Da1e2B8EA7D0755b",
         "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "🇨🇽",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "big_buy_comp": {
+            "length": 1,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                1,
+                0.2,
+                0.1
+            ],
+            "start_time": 1675452012.9952905,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 1,
+            "min_buy": 0.1,
+            "prize": 1,
+            "must_hold": 1,
+            "start_time": 1675451974.28853,
+            "end_time": 0,
+            "message_id": 1393
+        }
+    },
+    "5011624700": {
+        "status": "wait_token_address",
+        "chain": "BSC",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "off",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
@@ -18,9 +60,9 @@
             "circulating_supply": ""
         },
         "ongoing": "off",
-        "comp_type": "last_buy_comp",
+        "comp_type": "big_buy_comp",
         "big_buy_comp": {
-            "length": 1,
+            "length": 3,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
@@ -28,7 +70,7 @@
                 0.2,
                 0.1
             ],
-            "start_time": 1675442511.561266,
+            "start_time": 0,
             "end_time": 0
         },
         "last_buy_comp": {
@@ -36,9 +78,9 @@
             "min_buy": 0.1,
             "prize": 1,
             "must_hold": 1,
-            "start_time": 1675444937.9179459,
+            "start_time": 0,
             "end_time": 0,
-            "message_id": 1283
+            "message_id": 0
         }
     }
 }

@@ -268,11 +268,15 @@ async def add_message(message: aiogram.types.Message):
                            messages.select_chain_menu,
                            reply_markup = keyb,
                            reply_to_message_id=message.message_id)
-    
+
+# @dp.message_handler()
+# async def handle_any(message: aiogram.types.Message):
+#     print("anything:" , message )
+
 @dp.message_handler(
-    lambda message: message.text not in config.commands and not message.text.startswith("/"))
+    lambda message: (message.text not in config.commands and not message.text.startswith("/")))
 async def handle_input(message: aiogram.types.Message):
-    # print(message)
+    print(message)
     
     gid = message.chat.id
     if_init(gid)
@@ -310,7 +314,14 @@ async def handle_input(message: aiogram.types.Message):
             c,k = get_settings_menuvalue("tokengroup",gid)
             await message.reply(c,reply_markup=k)
     elif comps[gid]["status"] == "wait_bot_gif":
-        pass
+        if message.photo:
+            print("message: ", message)
+            await message.download_media('test.png')
+            comps[gid]['gif_image']=f"{gid}.png"
+            c, k = get_settings_menuvalue("buybot", gid)
+            await bot.send_message(gid,c,reply_markup=k)
+        else:
+            await message.reply("❌Input file not valid. Try again")
     elif comps[gid]["status"] == "wait_bot_minbuy":
         if message.text.isnumeric() and int(message.text)>0:
             comps[gid]["min_buy"] = int(message.text)
@@ -319,7 +330,7 @@ async def handle_input(message: aiogram.types.Message):
         else:
             await message.reply("❗️ Min buy amount to show value not valid")
     elif comps[gid]["status"] == "wait_bot_emoji":
-        if message.text[0]==":" and message.text[-1]==":":
+        if not message.text.isalnum():
             comps[gid]["buy_emoji"] = message.text
             c, k = get_settings_menuvalue("buybot", gid)
             await bot.send_message(gid,c,reply_markup=k)
@@ -586,8 +597,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         comps[gid]['status']=''
         if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
             await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
-        # elif comps[gid]['ongoing']=='on':
-        #     await bot.send_message(gid, "❌Another buy competition already started")
+        elif comps[gid]['ongoing']=='on':
+            await bot.send_message(gid, "❌Another buy competition already started")
         else:
             comps[gid]['ongoing'] = 'on'
             comps[gid]['big_buy_comp']['start_time']= time.time()
@@ -610,6 +621,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name})</i>🚀\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>", parse_mode=aiogram.types.ParseMode.HTML)
             image_fn.close()
             await start_m.pin()
+            print("start_message: ", start_m)
             # stop_run_continuously = run_continuously()
     update_comps_write()
 
@@ -640,8 +652,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         comps[gid]['status']=''
         if not (comps[gid]['pair_address'] and comps[gid]['token_name'] and comps[gid]['token_address']):
             await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
-        # elif comps[gid]['ongoing']=='on':
-        #     await bot.send_message(gid, "❌Another buy competition already started")
+        elif comps[gid]['ongoing']=='on':
+            await bot.send_message(gid, "❌Another buy competition already started")
 
         else:
             comps[gid]['ongoing'] = 'on'
