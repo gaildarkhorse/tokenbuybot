@@ -18,6 +18,7 @@ dp = aiogram.Dispatcher(bot, loop = loop)
 
 def get_winners_message(winners,alt_token_name,chain,prize1):
     winner_address = winners[0]['_id'] 
+    win_message=""
     win_order_gif ={
         0:"🥇",
         1:"🥈",
@@ -75,6 +76,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             
             g_data = comps[gid]
             chain = g_data['chain']
+            token_address = g_data['token_address']
             comp_type = g_data['comp_type']
             comp_info = g_data[comp_type]
             length = comp_info[lengths[comp_type]]
@@ -87,9 +89,9 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             minbuy = comp_info['min_buy']
             alt_token_name = g_data['alt_token_name']
             s_chart = g_data['token_group_pref']['selected_chart']
-            link_track="https://t.me/aiogrambottest2023"
-            link_chart=f"https://poocoin.app/tokens/{token_address}"
-            link_event=f"https://t.me/BuyBotTracker"
+            link_track='https://t.me/aiogrambottest2023'
+            link_chart=f'https://poocoin.app/tokens/{token_address}'
+            link_event=f'https://t.me/BuyBotTracker'
             
             if g_data['show_buys_w/out_comp'] == "on":
                 emoji = g_data['buy_emoji']
@@ -136,8 +138,8 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners : data error")
 
                     image_fn = open(f"images/{g_data['gif_image']}",'rb')
-                    finish_m = await bot.send_photo(gid, image_fn,
-                    f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends `{end_time}` UTC\n⏫Minimum Buy `{minbuy}{alt_token_name}`\n{winners_message}\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
+                    finish_m = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at {start_time} UTC\n⏳Ends {end_time} UTC\n⏫Minimum Buy {minbuy}{alt_token_name}\n{winners_message}"#\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
+                    finish_m = await bot.send_photo(gid, image_fn,finish_m,parse_mode=aiogram.types.ParseMode.HTML)
                     image_fn.close()
                     await finish_m.pin(True)
                     

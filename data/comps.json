@@ -2,10 +2,10 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
-        "token_name": "Cake",
-        "alt_token_name": "BNB",
-        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
@@ -21,14 +21,14 @@
         "comp_type": "big_buy_comp",
         "big_buy_comp": {
             "length": 1,
-            "min_buy": 0.005,
-            "must_hold": 1,
+            "min_buy": 0.01,
+            "must_hold": 2,
             "prize": [
                 1,
                 0.1,
                 0.1
             ],
-            "start_time": 1675433915.8931422,
+            "start_time": 1675439403.53828,
             "end_time": 0
         },
         "last_buy_comp": {
