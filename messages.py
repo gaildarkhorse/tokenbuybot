@@ -166,7 +166,7 @@ initialcompvalue = {
                 "circulating_supply":""
             },
             "ongoing":"off",
-            "comp_type":"",
+            "comp_type":"big_buy_comp",
             "big_buy_comp": {
                 "length":3,
                 "min_buy":0.1,

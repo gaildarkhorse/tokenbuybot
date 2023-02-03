@@ -25,8 +25,8 @@ def get_winners_message(winners,alt_token_name,chain,prize1):
         2:"🥉"
     }
     for i, winner in enumerate(winners):
-        win_message +=f"\n{win_order_gif[i]}`{winner['_id']}` ➖ `{winner['amount']}{alt_token_name}`"
-    win_message += f"\n\n🎊Congrats to `{winner_address}`wins `{prize1}{alt_token_name}`\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
+        win_message +=f"\n{win_order_gif[i]}<code>{winner['_id']}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
+    win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize1}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
     return win_message
 def run_continuously(interval=1):
     """Continuously run, while executing pending jobs at each
@@ -108,7 +108,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             link_txn=buy_info[txn]
                             
                             emoji_count = int(buy_info['value'])/g_data['buy_step']
-                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji}*emoji_count\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']}\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href={link_buyer}>{buy_info['buyer_address']}</a>`|`<a href={link_txn}>Txn</a>`|`<a href={link_track}>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
+                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji}*emoji_count\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']}\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href={link_buyer}>{buy_info['buyer_address']}</a><code>|</code><a href={link_txn}>Txn</a><code>|</code><a href={link_track}>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
                             image_fn = open(f"images/{g_data['gif_image']}",'rb')
                             bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
@@ -120,7 +120,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             if g_data['ongoing'] == 'off':
                 continue
             if comp_type == "big_buy_comp":
-                if r_time < 50:
+                if r_time < 0:
                     g_data["ongoing"] = "off"
                     update_comps_write()
                     prize1 = comp_info['prize'][0]
@@ -138,10 +138,12 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners : data error")
 
                     image_fn = open(f"images/{g_data['gif_image']}",'rb')
-                    finish_m = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at {start_time} UTC\n⏳Ends {end_time} UTC\n⏫Minimum Buy {minbuy}{alt_token_name}\n{winners_message}"#\n📊<a href={link_chart}>Chart ⚡️<a href={link_event}>Events</a>"
-                    finish_m = await bot.send_photo(gid, image_fn,finish_m,parse_mode=aiogram.types.ParseMode.HTML)
+                    text = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+
+                    finish_message = await bot.send_photo(gid, image_fn,text,parse_mode=aiogram.types.ParseMode.HTML)
+                    print("finish_message: ", finish_message)
+                    await bot.pin_chat_message(gid,finish_message.message_id,False)
                     image_fn.close()
-                    await finish_m.pin(True)
                     
 
             elif comp_type == "last_buy_comp":
@@ -263,7 +265,7 @@ async def handle_input(message: aiogram.types.Message):
             await message.reply(f"❌Token address not valid({message.text}). Try again")
     elif comps[gid]["status"] == "wait_grouplink":
         if not message.text.startswith("https://"):
-            await message.reply(f"❌Link not valid ({message.text}). Try again\nFormat: `https://t.me/mygroup`",parse_mode=aiogram.types.ParseMode().MARKDOWN)
+            await message.reply(f"❌Link not valid ({message.text}). Try again\nFormat: <code>https://t.me/mygroup</code>",parse_mode=aiogram.types.ParseMode().HTML)
         else:
             comps[gid]['token_group_pref']['group_link'] = message.text
             keyb = keyboards.Keyboards().settings_tokengroup(comps[gid]['token_group_pref'])
@@ -572,11 +574,14 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             # print(elapsed_t)
             remain_t = comp_data['length']*60-elapsed_t
             endin_time = [int(remain_t/60), int(remain_t) % 60] 
+            link_chart = f"https://poocoin.app/token/{comps[gid]['token_address']}"
+            link_event = f"https://t.me/BuyBotTracker"
+
             image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
             start_m = await bot.send_photo(gid, image_fn,
-            f"🎉Biggest Buy Competition Started\n\n🕓 Start at `{start_time} UTC`\n⏳Ends in `{endin_time[0]}`min `{endin_time[1]}`sec\n⏫Minimum Buy `{comp_data['min_buy']}{alt_token_name}`\n\n💰Winning Prize `{comp_data['prize'][0]}`{alt_token_name} *(2nd* `{comp_data['prize'][1]}`*{alt_token_name})*🚀\n💎Winner must hold at least `{comp_data['must_hold']}` hours\n\n📊[Chart](https://{comps[gid]['token_group_pref']['selected_chart']}/token/{comps[gid]['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
+            f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name})</i>🚀\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>", parse_mode=aiogram.types.ParseMode.HTML)
             image_fn.close()
-            await start_m.pin(True)
+            await start_m.pin()
             # stop_run_continuously = run_continuously()
     update_comps_write()
 
@@ -622,11 +627,15 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             elapsed_t = time.time() -t1
             # print(elapsed_t)
             remain_t = comp_data['countdown']*60-elapsed_t
-            endin_time = [int(remain_t/60), int(remain_t) % 60] 
+            endin_time = [int(remain_t/60), int(remain_t) % 60]
+
+            link_chart = f"https://poocoin.app/token/{comps[gid]['token_address']}"
+            link_event = f"https://t.me/BuyBotTracker"
+
             # image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
             start_m = await bot.send_message(gid,
-            f"🎉Last Buy Competition (LIVE)\n\n⏳`{endin_time[0]}:{endin_time[1]}`remaining time!\n⏫Minimum Buy `{comp_data['min_buy']}{alt_token_name}`\n💰Winning Prize `{comp_data['prize']}`{alt_token_name} 🚀\n\n📊[Chart](https://{comps[gid]['token_group_pref']['selected_chart']}/token/{comps[gid]['token_address']})",parse_mode=aiogram.types.ParseMode.MARKDOWN)
-            await start_m.pin(True)
+            f"🎉Last Buy Competition (LIVE)\n\n⏳<code>{endin_time[0]}:{endin_time[1]}</code>remaining time!\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name} 🚀\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
+            await start_m.pin()
     update_comps_write()
 
 

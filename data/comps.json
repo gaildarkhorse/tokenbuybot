@@ -2,33 +2,33 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "",
-        "token_name": "",
-        "alt_token_name": "",
-        "pair_address": "",
+        "token_address": "0x744df267b0c0c0eb6abc3cd3d8d0a145f6e75b9e",
+        "token_name": "SNT",
+        "alt_token_name": "BNB",
+        "pair_address": "0xc7110bC950b393631DCE70133D353fCE7a0E45Aa",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
-        "buy_step": 10,
+        "buy_step": 5,
         "token_group_pref": {
             "group_link": "",
             "notify_whale_buy": "off",
             "selected_chart": "PooCoin",
             "circulating_supply": ""
         },
-        "ongoing": "off",
-        "comp_type": "big_buy_comp",
+        "ongoing": "on",
+        "comp_type": "last_buy_comp",
         "big_buy_comp": {
             "length": 1,
-            "min_buy": 0.01,
-            "must_hold": 2,
+            "min_buy": 0.1,
+            "must_hold": 1,
             "prize": [
                 1,
-                0.1,
+                0.2,
                 0.1
             ],
-            "start_time": 1675439403.53828,
+            "start_time": 1675442511.561266,
             "end_time": 0
         },
         "last_buy_comp": {
@@ -38,7 +38,6 @@
             "must_hold": 1,
             "start_time": 0,
             "end_time": 0
-        },
-        "start_time": 1675398531.3299696
+        }
     }
 }
