@@ -568,27 +568,33 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
-    if c_data == "length":
-        comps[gid]['status'] = 'wait_buycomp_length'
-        await bot.send_message(gid, "➡️Send me competiton length (minute) (e.g 3)")
-    if c_data == "minbuy":
-        comps[gid]['status'] = 'wait_buycomp_minbuy'
-        await bot.send_message(gid, "➡️Send me minimum buy (e.g 0.05)")
-    if c_data == "prize1":
-        comps[gid]['status'] = 'wait_buycomp_prize1'
-        await bot.send_message(gid, "➡️Send me winning prize (e.g 0.05)")
-    if c_data == "musthold":
-        comps[gid]['status'] = 'wait_buycomp_musthold'
-        await bot.send_message(gid, "➡️Send me 'must hold' in hours (e.g 24)")
-        
-    if c_data == "prize2":
-        comps[gid]['status'] = 'wait_buycomp_prize2'
-        await bot.send_message(gid, "➡️Send me second place prize (e.g 0.05)")
-        
-    if c_data == "prize3":
-        comps[gid]['status'] = 'wait_buycomp_prize3'
-        await bot.send_message(gid, "➡️Send me third place prize (e.g 0.05)")
-    if c_data == "back":
+    onComp = comps[gid]['ongoing']=='on'
+    if c_data != "back" and c_data != "start":
+        if onComp and comps[gid]['comp_type']=="big_buy_comp":
+            await bot.send_message(gid,"Biggest buy competition ongoing. No changes allowed")
+            comps[gid]['status']=''
+        else:
+            if c_data == "length":
+                comps[gid]['status'] = 'wait_buycomp_length'
+                await bot.send_message(gid, "➡️Send me competiton length (minute) (e.g 3)")
+            if c_data == "minbuy":
+                comps[gid]['status'] = 'wait_buycomp_minbuy'
+                await bot.send_message(gid, "➡️Send me minimum buy (e.g 0.05)")
+            if c_data == "prize1":
+                comps[gid]['status'] = 'wait_buycomp_prize1'
+                await bot.send_message(gid, "➡️Send me winning prize (e.g 0.05)")
+            if c_data == "musthold":
+                comps[gid]['status'] = 'wait_buycomp_musthold'
+                await bot.send_message(gid, "➡️Send me 'must hold' in hours (e.g 24)")
+                
+            if c_data == "prize2":
+                comps[gid]['status'] = 'wait_buycomp_prize2'
+                await bot.send_message(gid, "➡️Send me second place prize (e.g 0.05)")
+                
+            if c_data == "prize3":
+                comps[gid]['status'] = 'wait_buycomp_prize3'
+                await bot.send_message(gid, "➡️Send me third place prize (e.g 0.05)")
+    elif c_data == "back":
         comps[gid]["status"]=""
         c,k = get_settings_menuvalue("buybot", gid)
         await bot.edit_message_text(text=c,chat_id=gid,message_id = call.message.message_id,reply_markup=k)
@@ -631,19 +637,25 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
-    if c_data == "length":
-        comps[gid]['status'] = 'wait_lastcomp_length'
-        await bot.send_message(gid, "➡️Send me countdown (minute) (e.g 3) for Last Buy Competition")
-    if c_data == "minbuy":
-        comps[gid]['status'] = 'wait_lastcomp_minbuy'
-        await bot.send_message(gid, "➡️Send me minimum buy (e.g 0.05) for Last Buy Competition")
-    if c_data == "prize1":
-        comps[gid]['status'] = 'wait_lastcomp_prize1'
-        await bot.send_message(gid, "➡️Send me winning prize (e.g 0.05) for Last Buy Competition")
-    if c_data == "musthold":
-        comps[gid]['status'] = 'wait_lastcomp_musthold'
-        await bot.send_message(gid, "➡️Send me 'must hold' in hours (e.g 24) for Last Buy Competition")
-    if c_data == "back":
+    onComp = comps[gid]['ongoing']=='on'
+    if c_data != "back" and c_data != "start":
+        if onComp and comps[gid]['comp_type']=="last_buy_comp":
+            await bot.send_message(gid,"Last buy competition ongoing. No changes allowed")
+            comps[gid]['status']=''
+        else:
+            if c_data == "length":
+                comps[gid]['status'] = 'wait_lastcomp_length'
+                await bot.send_message(gid, "➡️Send me countdown (minute) (e.g 3) for Last Buy Competition")
+            if c_data == "minbuy":
+                comps[gid]['status'] = 'wait_lastcomp_minbuy'
+                await bot.send_message(gid, "➡️Send me minimum buy (e.g 0.05) for Last Buy Competition")
+            if c_data == "prize1":
+                comps[gid]['status'] = 'wait_lastcomp_prize1'
+                await bot.send_message(gid, "➡️Send me winning prize (e.g 0.05) for Last Buy Competition")
+            if c_data == "musthold":
+                comps[gid]['status'] = 'wait_lastcomp_musthold'
+                await bot.send_message(gid, "➡️Send me 'must hold' in hours (e.g 24) for Last Buy Competition")
+    elif c_data == "back":
         comps[gid]["status"]=""
         c,k = get_settings_menuvalue("buybot", gid)
         await bot.edit_message_text(text=c,chat_id=gid,message_id = call.message.message_id,reply_markup=k)
@@ -734,6 +746,9 @@ def update_comps_read():
         temp_dict = {}
         for key, val in comps.items():
             temp_dict[int(key)] = comps[key]
+            temp_dict[int(key)]["ongoing"] = "off"
+            temp_dict[int(key)]["status"] = ""
+            
         
         comps = temp_dict
         temp_dict = {}

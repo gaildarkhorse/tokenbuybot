@@ -127,27 +127,28 @@ class Keyboards:
         return keyboards['settings_tokengroup']
 
     def settings_buycomp(self,g_data):
+        onComp = g_data['ongoing']=="off" 
         keyboards['settings_buycomp'] = types.InlineKeyboardMarkup()
 
         btn1 = types.InlineKeyboardButton(
-            text=f"⏳Length ({g_data['big_buy_comp']['length']} minute)", callback_data=f"settings_buycomp_length")   
+            text=("⏳" if onComp else "🔒")+f"Length ({g_data['big_buy_comp']['length']} minute)", callback_data=f"settings_buycomp_length")   
              
         btn2 = types.InlineKeyboardButton(
-            text=f"#️⃣Min Buy ({g_data['big_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_minbuy")
+            text=("#️⃣" if onComp else "🔒")+f"Min Buy ({g_data['big_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_minbuy")
         btn3 = types.InlineKeyboardButton(
-            text=f"🥇Prize ({g_data['big_buy_comp']['prize'][0]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize1")
+            text=("🥇" if onComp else "🔒")+f"Prize ({g_data['big_buy_comp']['prize'][0]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize1")
         
         btn4 = types.InlineKeyboardButton(
-            text=f"💎Must Hold ({g_data['big_buy_comp']['must_hold']} hours)", callback_data=f"settings_buycomp_musthold")
+            text=("💎" if onComp else "🔒")+f"Must Hold ({g_data['big_buy_comp']['must_hold']} hours)", callback_data=f"settings_buycomp_musthold")
 
         btn5 = types.InlineKeyboardButton(
-            text=f"🥈2nd Pr. ({g_data['big_buy_comp']['prize'][1]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2")   
+            text=("🥈" if onComp else "🔒")+f"2nd Pr. ({g_data['big_buy_comp']['prize'][1]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize2")   
              
         btn6 = types.InlineKeyboardButton(
-            text=f"🥉3rd Pr. ({g_data['big_buy_comp']['prize'][2]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize3") 
+            text=("🥉" if onComp else "🔒")+f"3rd Pr. ({g_data['big_buy_comp']['prize'][2]} {g_data['alt_token_name']})", callback_data=f"settings_buycomp_prize3") 
         
         btn7 = types.InlineKeyboardButton(
-            text=f"🏆Start Biggest Buy Competition!🏆", callback_data=f"settings_buycomp_start")
+            text=("🏆" if onComp else "🔒")+f"Start Biggest Buy Competition!"+("🏆" if onComp else "🔒"), callback_data=f"settings_buycomp_start")
         
         btn8 = types.InlineKeyboardButton(
             text=f"🔙Go Back to Bot Settings", callback_data=f"settings_buycomp_back")
@@ -161,20 +162,20 @@ class Keyboards:
 
     def settings_lastcomp(self,g_data):
         keyboards['settings_lastcomp'] = types.InlineKeyboardMarkup()
-
+        onComp = g_data['ongoing']=="off"
         btn1 = types.InlineKeyboardButton(
-            text=f"⏳Countdown ({g_data['last_buy_comp']['countdown']} minutes)", callback_data=f"settings_lastcomp_length")   
+            text=("⏳" if onComp else "🔒")+f"Countdown ({g_data['last_buy_comp']['countdown']} minutes)", callback_data=f"settings_lastcomp_length")   
              
         btn2 = types.InlineKeyboardButton(
-            text=f"#️⃣Minimum Buy ({g_data['last_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_minbuy")
+            text=("#️⃣" if onComp else "🔒")+f"Minimum Buy ({g_data['last_buy_comp']['min_buy']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_minbuy")
         btn3 = types.InlineKeyboardButton(
-            text=f"🥇Prize ({g_data['last_buy_comp']['prize']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_prize1")
+            text=("🥇" if onComp else "🔒")+f"Prize ({g_data['last_buy_comp']['prize']} {g_data['alt_token_name']})", callback_data=f"settings_lastcomp_prize1")
         
         btn4 = types.InlineKeyboardButton(
-            text=f"💎Must Hold {g_data['last_buy_comp']['must_hold']} hours)", callback_data=f"settings_lastcomp_musthold")
+            text=("💎" if onComp else "🔒")+f"Must Hold {g_data['last_buy_comp']['must_hold']} hours)", callback_data=f"settings_lastcomp_musthold")
         
         btn5 = types.InlineKeyboardButton(
-            text=f"🏆Start Last Buy Competition!🏆", callback_data=f"settings_lastcomp_start")
+            text=("🏆" if onComp else "🔒")+"Start Last Buy Competition!"+("🏆" if onComp else "🔒"), callback_data=f"settings_lastcomp_start")
         
         btn6 = types.InlineKeyboardButton(
             text=f"🔙Go Back to Bot Settings", callback_data=f"settings_lastcomp_back")
@@ -242,5 +243,5 @@ class Keyboards:
                 
         keyboards['select_chain'].add(ethBtn)
         keyboards['select_chain'].add(bscBtn)
-        keyboards['select_chain'].add(bscTestnetBtn)
+        # keyboards['select_chain'].add(bscTestnetBtn)
         return keyboards['select_chain']
