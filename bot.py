@@ -13,6 +13,7 @@ from datetime import datetime
 
 bot = aiogram.Bot(token = config.API_TOKEN,
                   parse_mode = aiogram.types.ParseMode.HTML)
+
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
@@ -28,6 +29,24 @@ def get_winners_message(winners,alt_token_name,chain,prize1):
         win_message +=f"\n{win_order_gif[i]}<code>{winner['_id']}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
     win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize1}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
     return win_message
+def record_winners(winners,gid):
+    prize = comps[gid][comps[gid]['comp_type']]['prize']
+    if comps[gid]['comp_type']=="last_buy_comp":
+        prize = [prize]
+    for i, winner in enumerate(winners):
+        
+        comps[gid]['winners'][winner['hash']]={
+            "address": winner['_id'],
+            "amount":winner["amount"],
+            "token_name":comps[gid]["token_name"],
+            "token_address":comps[gid]["token_address"],
+            "prize":prize[i],
+            "alt_token_name":comps[gid]["alt_token_name"],
+            "chain":comps[gid]["chain"],
+            "comp_type":comps[gid]["comp_type"],
+            "pay_tx":""
+        }
+
 def run_continuously(interval=1):
     """Continuously run, while executing pending jobs at each
     elapsed time interval.
@@ -53,9 +72,11 @@ def run_continuously(interval=1):
     return cease_continuous_run
 
 comps ={}
-
+comp_text = ""
 async def get_latest_buyinfo():#message: aiogram.types.Message=None):
     while 1:
+        
+
         await asyncio.sleep(5)
         # await bot.send_message(-1001661521028, "hhhhh")
 
@@ -91,6 +112,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             end_time = datetime.utcfromtimestamp(e_time).strftime("%H:%M:%S")
             minbuy = comp_info['min_buy']
             alt_token_name = g_data['alt_token_name']
+            token_name = g_data['token_name']
             s_chart = g_data['token_group_pref']['selected_chart']
             link_track='https://t.me/aiogrambottest2023'
             link_chart=f'https://poocoin.app/tokens/{token_address}'
@@ -100,18 +122,19 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 emoji = g_data['buy_emoji']
                 params = {'groupId':gid}
                 res = r.post(url+"/getLatestEvent",data = params, verify = False)
-                # print("get_lastbuy_response:", res)
+                print("get_lastbuy_response:", res)
                 if res.status_code == 200:
                     try:
                         res = res.json()
                         # print("get_lastbuy:", res)
                         buy_info = res["event"]
-                        if bool(buy_info) and int(buy_info['value'])<g_data['min_buy']:
+                        if bool(buy_info) and int(buy_info['value'])>=g_data['min_buy']:
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
                             link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
                             
                             emoji_count = int(buy_info['value']/g_data['buy_step'])
-                            buy_message=f"<b>StatusNetwork </b>Buy!\n{emoji*emoji_count}\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']})\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href='{link_buyer}'>{buy_info['buyer_address'][0:5]}...{buy_info['buyer_address'][-3:]}</a><code>|</code><a href='{link_txn}'>Txn</a><code>|</code><a href='{link_track}'>Track</a>\n🪪Market Cap ${buy_info['marketcap']}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                            buy_message=f"<b>{token_name} ({chain}) </b>Buy!\n{emoji*emoji_count}\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']})\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href='{link_buyer}'>{buy_info['buyer_address'][0:5]}...{buy_info['buyer_address'][-3:]}</a><code>|</code><a href='{link_txn}'>Txn</a><code>|</code><a href='{link_track}'>Track</a>\n🔘Market Cap ${buy_info['marketcap']}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+ 
                             image_fn = open(f"images/{g_data['gif_image']}",'rb')
                             await bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
@@ -138,7 +161,10 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             res = res.json()
                             print("get_winners",res)
                             winners = res['winners']
-                            if len(winners)>0:winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                            if len(winners)>0:
+                                winners_message = get_winners_message(winners,alt_token_name,chain,prize1)
+                                record_winners(winners,gid)
+                                 
                         except KeyError:
                             print("get_winners : data error")
 
@@ -146,9 +172,11 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                     text = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
 
                     finish_message = await bot.send_photo(gid, image_fn,text,parse_mode=aiogram.types.ParseMode.HTML)
-                    print("finish_message: ", finish_message)
+                    # print("finish_message: ", finish_message)
                     await bot.pin_chat_message(gid,finish_message.message_id,False)
                     image_fn.close()
+                    res = BotAPI(gid, g_data).stop()
+                    print("stop_response :", res)
                     
 
             elif comp_type == "last_buy_comp":
@@ -171,8 +199,10 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                         try:
                             res = res.json()
                             print("get_winners",res)
-                            winners = res['winners']
-                            if len(winners)>0:winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                            winners = res['winner']
+                            if len(winners)>0:
+                                winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                                record_winners(winners,gid)
                         except KeyError:
                             print("get_winners : data error")
 
@@ -257,7 +287,51 @@ async def change_settings(message: aiogram.types.Message):
         return
     c,k = get_settings_menuvalue("buybot",gid)
     await bot.send_message(gid, c, reply_markup=k)
-    
+@dp.message_handler(commands = ['comp'])
+async def show_winners(message: aiogram.types.Message):
+    gid = message.chat.id
+    if_init(gid)
+    reset_status(gid)
+    if comp_text == "":
+        await message.reply("❗️ There is no competion yet")
+        return
+    if comps[gid]['ongoing']=='off':
+        text = "🏁Biggest Buy Competition Finished\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Finished</a>"
+    else:
+        if comps[gid]['comp_type']=="big_buy_comp":
+            text = "🏁Biggest Buy Competition Started\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Finished</a>\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
+        else:
+            text = "🏁Biggest Buy Competition Finished\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Live</a>\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
+    await message.reply(text)
+
+@dp.message_handler(commands = ['winners'])
+async def show_winners(message: aiogram.types.Message):
+    gid = message.chat.id
+    if_init(gid)
+    reset_status(gid)
+    winners = comps[gid]['winners']
+    chain = comps[gid]['chain']
+    domains = {
+        "BSC": "https://bscscan.com",
+        "ETH": "https://etherscan.io"
+    }
+    url = domains[chain]
+    token_address = comps[gid]['token_address']
+    winners_count = len(winners.keys())
+    if winners_count ==0:
+        await bot.send_message(gid,"❕There is no completed competition yet!")
+    else:
+        caption = f"🏁{winners_count}competitions have been completed so far"
+        for key, winner in winners.items():
+            link_wallet = f"{url}/address/{winner['address']}"
+            link_buytxs = f"{url}/token/{token_address}?a={winner['address']}"
+            pay_tx_message = "  Waiting payment..."
+            if winner['pay_tx']:
+                pay_tx_message = f"<a href='{winner['pay_tx']}'>Pay Txs</a>" 
+            caption += f"\n\n⏳<code>{winner['address']}</code> wins <code>{winner['prize']}</code>{winner['alt_token_name']}({winner_type})\n<a href='{link_wallet}'>➡️Wallet </a><code>|</code><a href='{link_buytxs}'> Buy Txs </a><code>|</code>{pay_tx_message}"
+        keyb = keyboards.Keyboards().show_winners()
+        await bot.send_message(gid, caption, reply_markup=keyb)       
+
 @dp.message_handler(commands = ['add'])
 async def add_message(message: aiogram.types.Message):
     gid = message.chat.id
@@ -424,6 +498,31 @@ async def handle_input(message: aiogram.types.Message):
             await bot.send_message(gid,c,reply_markup=k)
         else:
             await message.reply(f"❌Enter valid time (in hours) (e.g 12, 24)...\n➡️Send me 'must hold' in hours for Last Buy Competition?")
+    elif comps[gid]['status'] == "wait_paytxn":
+        if message.text.startswith("https://etherscan.io/tx/0x") or message.text.startswith("https://bscscan.com/tx/0x"):
+            chainIds = {
+                "eth":"1",
+                "bsc":"56"
+            }
+            chainId = chainIds[message.text[8:10]]
+            r = requests.Session()
+            url = "https://tetra.tg.api.cryptosnowprince.com/api/verify"
+            data = {"winners":comps[gid]['winners'], "tx": message.text.split("tx/")[1], "chainId":chainId}
+            res = r.post(url,data = params, verify=False)
+            print("verify_response :", res)
+            if res.status_code == 200:
+                try:
+                    res = res.json()
+                    print("verify_response :", res)
+                    winner_hash = res["winnerHash"]
+                    comps[gid]['winners'][winner_hash]['pay_tx'] = message.text
+                    await show_winners(call.message)
+                except KeyError:
+                    await message.reply("❗️ Not found any payment info")
+            else:
+                await message.reply("❗️ Not found any payment info")
+        else:
+            await bot.send_message(gid,"❗️ Not found any payment info", reply_to_message_id=call.message.id)
     reset_status(gid)
     
 
@@ -435,6 +534,8 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     if_init(gid)
     
     print(gid,call.message.from_user.first_name, call.data)
+    admins = await bot.get_chat_administrators(gid)
+    print("admins: ", admins)
     if comps[gid]["token_address"] != "":
         await bot.send_message(gid, messages.remove_done_message[0])
     else:
@@ -446,7 +547,20 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     comps[gid]["chain"] = ""
     BotAPI(gid,comps[gid]).stop()
     comps[gid]["ongoing"] = "off"
+    comps[gid]["winners"] = {}
     reset_status(gid)
+
+
+@dp.callback_query_handler(lambda call: call.data == "show_winners_sendtxn")
+async def ask_for_tx(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
+    print(gid,call.message.from_user.first_name, call.data)
+    comps[gid]["status"] = "wait_paytxn"
+    await bot.send_message(gid,"➡️Send tx link to proof any payment to winner")
+    update_comps_write()
+
+
 
 @dp.callback_query_handler(lambda call: call.data.startswith("pair") and len(call.data.split("_"))==4)
 async def select_pair(call: aiogram.types.CallbackQuery):
@@ -476,7 +590,8 @@ async def select_pair(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     if not (token_address and chain):
         await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
         return
@@ -525,7 +640,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def settings_tokengroup(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
     if not (token_address and chain):
         await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
@@ -563,7 +679,8 @@ async def settings_tokengroup(call: aiogram.types.CallbackQuery):
 async def select_chart(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
     if not (token_address and chain):
         await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
@@ -581,7 +698,8 @@ async def select_chart(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
     if not (token_address and chain):
         await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
@@ -653,7 +771,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
     if not (token_address and chain):
         await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
@@ -720,6 +839,8 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def select_settings_menu(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
     print(gid,call.message.from_user.first_name, call.data)
     c_data = call.data.split('_')[2]
     if not (token_address and chain):
@@ -765,6 +886,7 @@ def update_comps_write():
         
 def update_comps_read():
     global comps
+    global comp_text
     with open("./data/comps.json", 'r') as read_comps:
         comps = json.load(read_comps)
         temp_dict = {}
@@ -778,6 +900,7 @@ def update_comps_read():
         
         comps = temp_dict
         temp_dict = {}
+    comp_text = ""
 
 
 if __name__ == "__main__":

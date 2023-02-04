@@ -1,6 +1,6 @@
 API_TOKEN = "6116655105:AAG706p_rstoIPQRwYV_wYjPyzbBMHMfrwM"
 
-commands = ['/start', '/add', '/comp', '/winners', '/info', '/remove', '/help'
+commands = ['/start', '/add', '/comp', '/winners', '/comp', '/info', '/remove', '/help'
 ]
 
 CATEGORIES = {

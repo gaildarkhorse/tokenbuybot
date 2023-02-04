@@ -2,33 +2,33 @@
     "-1001661521028": {
         "status": "",
         "chain": "BSC",
-        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
         "token_name": "Cake",
         "alt_token_name": "BNB",
         "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
-        "show_buys_w/out_comp": "off",
+        "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "👩‍👩‍👧‍👧",
         "min_buy": 10,
-        "buy_step": 1,
+        "buy_step": 10,
         "token_group_pref": {
             "group_link": "https://pancakeswap.com",
             "notify_whale_buy": "on",
-            "selected_chart": "PooCoin",
+            "selected_chart": "ProofOfX",
             "circulating_supply": "13243421"
         },
-        "ongoing": "off",
+        "ongoing": "on",
         "comp_type": "big_buy_comp",
         "big_buy_comp": {
-            "length": 1,
+            "length": 10,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
-                1,
-                0.2,
-                0.1
+                0.002,
+                0.001,
+                0.0005
             ],
-            "start_time": 1675515345.4275055,
+            "start_time": 1675534987.0460427,
             "end_time": 0
         },
         "last_buy_comp": {
@@ -36,9 +36,9 @@
             "min_buy": 0.1,
             "prize": 1,
             "must_hold": 1,
-            "start_time": 1675453806.3096786,
+            "start_time": 1675522152.8326058,
             "end_time": 0,
-            "message_id": 1410
+            "message_id": 1893
         }
     },
     "5011624700": {

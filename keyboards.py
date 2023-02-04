@@ -196,6 +196,16 @@ class Keyboards:
         keyboards['remove'].row(removebtn)
 
         return keyboards['remove']
+
+    def show_winners(self):
+        keyboards['show_winners'] = types.InlineKeyboardMarkup()
+
+        btn1 = types.InlineKeyboardButton(
+            text="⏫SEND TXN TO PROVE PAYMENT", callback_data=f"show_winners_sendtxn")   
+        
+        keyboards['show_winners'].row(btn1)
+
+        return keyboards['show_winners']
     
     def settings_buybot(self,g_data):
         keyboards['settings_buybot'] = types.InlineKeyboardMarkup()

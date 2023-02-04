@@ -167,6 +167,7 @@ initialcompvalue = {
             },
             "ongoing":"off",
             "comp_type":"big_buy_comp",
+            "winners":{},
             "big_buy_comp": {
                 "length":3,
                 "min_buy":0.1,
