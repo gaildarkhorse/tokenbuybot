@@ -60,10 +60,10 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
         # await bot.send_message(-1001661521028, "hhhhh")
 
         start_time =  datetime.now().strftime("%H:%M:%S")
-        print(start_time)
+        # print(start_time)
 
         r = requests.Session()
-        url = "https://tetra.tg.api.cryptosnowprince.com/api/buyevent"#/getLatestEvent"
+        url = "https://tetra.tg.api.cryptosnowprince.com/api/"
         lengths = {
             "big_buy_comp": "length",
             "last_buy_comp":"countdown"
@@ -77,6 +77,9 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             g_data = comps[gid]
             chain = g_data['chain']
             token_address = g_data['token_address']
+            if not (token_address and chain):
+                continue
+            
             comp_type = g_data['comp_type']
             comp_info = g_data[comp_type]
             length = comp_info[lengths[comp_type]]
@@ -97,11 +100,11 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 emoji = g_data['buy_emoji']
                 params = {'groupId':gid}
                 res = r.post(url+"/getLatestEvent",data = params, verify = False)
-                print("get_lastbuy_response:", res)
+                # print("get_lastbuy_response:", res)
                 if res.status_code == 200:
                     try:
                         res = res.json()
-                        print("get_lastbuy:", res)
+                        # print("get_lastbuy:", res)
                         buy_info = res["event"]
                         if bool(buy_info) and int(buy_info['value'])<g_data['min_buy']:
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
@@ -113,9 +116,11 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             await bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
                     except KeyError:
-                        print("get_lastbuy : data error")
+                        pass
+                        # print("get_lastbuy : data error")
                 else:
-                    print("get_lastbuy : fail")
+                    pass
+                    # print("get_lastbuy : fail")
 
             if g_data['ongoing'] == 'off':
                 continue
@@ -276,7 +281,7 @@ async def add_message(message: aiogram.types.Message):
 @dp.message_handler(
     lambda message: (message.text not in config.commands and not message.text.startswith("/")))
 async def handle_input(message: aiogram.types.Message):
-    print(message)
+    # print(message)
     
     gid = message.chat.id
     if_init(gid)
@@ -439,7 +444,7 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     comps[gid]["alt_token_name"] = ""
     comps[gid]["pair_address"] = ""
     comps[gid]["chain"] = ""
-    if comps[gid]["ongoing"]=="on":BotAPI(gid,comps[gid]).stop()
+    BotAPI(gid,comps[gid]).stop()
     comps[gid]["ongoing"] = "off"
     reset_status(gid)
 
@@ -471,6 +476,10 @@ async def select_pair(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
 
     c_data = call.data.split("_")[2]
     if c_data == "showbuyswithorwithoutcomp":
@@ -518,6 +527,9 @@ async def settings_tokengroup(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     if c_data == "grouplink":
         comps[gid]['status'] = "wait_grouplink"
         await bot.send_message(gid, "➡️Send me group or portal link")
@@ -553,6 +565,9 @@ async def select_chart(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     if c_data == "back":
         c,k = get_settings_menuvalue("tokengroup", gid)
         await bot.edit_message_text(c,gid,call.message.message_id,reply_markup=k)
@@ -568,6 +583,9 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     onComp = comps[gid]['ongoing']=='on'
     if c_data != "back" and c_data != "start":
         if onComp and comps[gid]['comp_type']=="big_buy_comp":
@@ -637,6 +655,9 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
     if_init(gid)
 
     c_data = call.data.split("_")[2]
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     onComp = comps[gid]['ongoing']=='on'
     if c_data != "back" and c_data != "start":
         if onComp and comps[gid]['comp_type']=="last_buy_comp":
@@ -701,6 +722,9 @@ async def select_settings_menu(call: aiogram.types.CallbackQuery):
     if_init(gid)
     print(gid,call.message.from_user.first_name, call.data)
     c_data = call.data.split('_')[2]
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     if c_data == "grouplink":
         comps[gid]['status']="wait_grouplink"
         await bot.send_message(gid,"➡️Send me group or portal link")
@@ -748,6 +772,8 @@ def update_comps_read():
             temp_dict[int(key)] = comps[key]
             temp_dict[int(key)]["ongoing"] = "off"
             temp_dict[int(key)]["status"] = ""
+            
+            
             
         
         comps = temp_dict
