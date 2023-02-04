@@ -207,6 +207,18 @@ class Keyboards:
 
         return keyboards['show_winners']
     
+    def disq_keys(self):
+        keyboards['disq_keys'] = types.InlineKeyboardMarkup()
+
+        btn1 = types.InlineKeyboardButton(
+            text="➡️Biggest Buy", callback_data=f"disq_keys_bigbuy") 
+        btn2 = types.InlineKeyboardButton(
+            text="➡️Last Buy", callback_data=f"disq_keys_lastbuy")   
+        
+        keyboards['disq_keys'].row(btn1,btn2)
+
+        return keyboards['disq_keys']
+    
     def settings_buybot(self,g_data):
         keyboards['settings_buybot'] = types.InlineKeyboardMarkup()
         on_off_text ={

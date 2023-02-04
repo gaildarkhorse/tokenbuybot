@@ -73,6 +73,7 @@ def run_continuously(interval=1):
 
 comps ={}
 comp_text = ""
+blacklist={}
 async def get_latest_buyinfo():#message: aiogram.types.Message=None):
     while 1:
         
@@ -133,9 +134,11 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
                             
                             emoji_count = int(buy_info['value']/g_data['buy_step'])
+                            if emoji_count>100:emoji_count=100
                             buy_message=f"<b>{token_name} ({chain}) </b>Buy!\n{emoji*emoji_count}\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']})\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href='{link_buyer}'>{buy_info['buyer_address'][0:5]}...{buy_info['buyer_address'][-3:]}</a><code>|</code><a href='{link_txn}'>Txn</a><code>|</code><a href='{link_track}'>Track</a>\n🔘Market Cap ${buy_info['marketcap']}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
  
                             image_fn = open(f"images/{g_data['gif_image']}",'rb')
+                            # print("buy_message ", buy_message)
                             await bot.send_photo(gid, image_fn,buy_message,aiogram.types.ParseMode.HTML)
 
                     except KeyError:
@@ -290,7 +293,7 @@ async def change_settings(message: aiogram.types.Message):
     c,k = get_settings_menuvalue("buybot",gid)
     await bot.send_message(gid, c, reply_markup=k)
 @dp.message_handler(commands = ['comp'])
-async def show_winners(message: aiogram.types.Message):
+async def show_comp(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
@@ -305,6 +308,14 @@ async def show_winners(message: aiogram.types.Message):
         else:
             text = "🏁Biggest Buy Competition Finished\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Live</a>\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
     await message.reply(text)
+
+@dp.message_handler(commands = ['disq'])
+async def show_winners(message: aiogram.types.Message):
+    gid = message.chat.id
+    if_init(gid)
+    reset_status(gid)
+    keyb = keyboards.Keyboards().disq_keys()
+    await message.reply("⬇️Select competition type to disqualify a wallet from ongoing competition",reply_markup=keyb)
 
 @dp.message_handler(commands = ['winners'])
 async def show_winners(message: aiogram.types.Message):
@@ -330,7 +341,7 @@ async def show_winners(message: aiogram.types.Message):
             pay_tx_message = "  Waiting payment..."
             if winner['pay_tx']:
                 pay_tx_message = f"<a href='{winner['pay_tx']}'>Pay Txs</a>" 
-            caption += f"\n\n⏳<code>{winner['address']}</code> wins <code>{winner['prize']}</code>{winner['alt_token_name']}({winner_type})\n<a href='{link_wallet}'>➡️Wallet </a><code>|</code><a href='{link_buytxs}'> Buy Txs </a><code>|</code>{pay_tx_message}"
+            caption += f"\n\n⏳<code>{winner['address']}</code> wins <code>{winner['prize']}</code>{winner['alt_token_name']}\n<a href='{link_wallet}'>➡️Wallet </a><code>|</code><a href='{link_buytxs}'> Buy Txs </a><code>|</code>{pay_tx_message}"
         keyb = keyboards.Keyboards().show_winners()
         await bot.send_message(gid, caption, reply_markup=keyb)       
 
@@ -500,16 +511,28 @@ async def handle_input(message: aiogram.types.Message):
             await bot.send_message(gid,c,reply_markup=k)
         else:
             await message.reply(f"❌Enter valid time (in hours) (e.g 12, 24)...\n➡️Send me 'must hold' in hours for Last Buy Competition?")
+    elif comps[gid]['status'] == "wait_disq_wallet":
+        if not verify_token_address(message.text):
+            text = "❗️ Wallet address not valid"
+        else:
+            if message.text in blacklist.keys() and blacklist[message.text]:
+                blacklist[message.text] = False
+                text = f"✅Wallet re-qualified for ongoing biggest buy competition.\n\nWallet:<code>{message.text}</code>"
+            else:
+                blacklist[message.text] = True
+                text = f"✅Wallet disqualified for ongoing biggest buy competition.\n\nWallet:<code>{message.text}</code>"
+        await message.reply(text)
     elif comps[gid]['status'] == "wait_paytxn":
         if message.text.startswith("https://etherscan.io/tx/0x") or message.text.startswith("https://bscscan.com/tx/0x"):
             chainIds = {
                 "eth":"1",
                 "bsc":"56"
             }
-            chainId = chainIds[message.text[8:10]]
+            chainId = chainIds[message.text[8:11]]
             r = requests.Session()
             url = "https://tetra.tg.api.cryptosnowprince.com/api/verify"
-            data = {"winners":comps[gid]['winners'], "tx": message.text.split("tx/")[1], "chainId":chainId}
+            params = {"winners":comps[gid]["winners"], "tx": message.text.split("tx/")[1], "chainId":chainId}
+            # print("verify_params: ", params)
             res = r.post(url,data = params, verify=False)
             print("verify_response :", res)
             if res.status_code == 200:
@@ -524,7 +547,7 @@ async def handle_input(message: aiogram.types.Message):
             else:
                 await message.reply("❗️ Not found any payment info")
         else:
-            await bot.send_message(gid,"❗️ Not found any payment info", reply_to_message_id=call.message.id)
+            await message.reply("❗️ No tx hash found. Try again")
     reset_status(gid)
     
 
@@ -551,6 +574,8 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     comps[gid]["ongoing"] = "off"
     comps[gid]["winners"] = {}
     reset_status(gid)
+    blacklist = {}
+    comp_text =""
 
 
 @dp.callback_query_handler(lambda call: call.data == "show_winners_sendtxn")
@@ -587,6 +612,22 @@ async def select_pair(call: aiogram.types.CallbackQuery):
         keyb = keyboards.Keyboards().select_settings_menu()
         await bot.send_message(gid, f"✅{token_name}({comps[gid]['chain']}) added to <b>{messages.bot_name}!</b>\n\n<i>Attach Your Telegram by selecting “Portal or Group Link” to make it clickable if you Trend at @BuyBotTrending!</i>", reply_markup=keyb, reply_to_message_id=call.message.message_id)
     reset_status(gid)
+
+@dp.callback_query_handler(lambda call: call.data.startswith("disq_keys"))
+async def disq_wallet_input(call: aiogram.types.CallbackQuery):
+    gid = call.message.chat.id
+    if_init(gid)
+    token_address = comps[gid]['token_address']
+    chain = comps[gid]['chain']
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
+    if comps[gid]['ongoing']=='off':
+        comps[gid]['status']=""
+        await bot.send_message(gid,"❗️A wallet can only be disqualified during the ongoing competition")
+    else:
+        comps[gid]['status']="wait_disq_wallet"
+        await bot.send_message(gid, "➡️Send wallet address to disqualify (or re-qualify a disqualified wallet before) from ongoing biggest buy competition")
 
 @dp.callback_query_handler(lambda call: call.data.startswith("settings_buybot") and len(call.data.split("_"))==3)
 async def settings_buybot(call: aiogram.types.CallbackQuery):
@@ -891,6 +932,7 @@ def update_comps_write():
 def update_comps_read():
     global comps
     global comp_text
+    global blacklist
     with open("./data/comps.json", 'r') as read_comps:
         comps = json.load(read_comps)
         temp_dict = {}
@@ -905,6 +947,7 @@ def update_comps_read():
         comps = temp_dict
         temp_dict = {}
     comp_text = ""
+    blacklist = {}
 
 
 if __name__ == "__main__":
