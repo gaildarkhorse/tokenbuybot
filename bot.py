@@ -169,7 +169,8 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners : data error")
 
                     image_fn = open(f"images/{g_data['gif_image']}",'rb')
-                    text = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    comp_text = f"🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}"
+                    text = f"🏁Biggest Buy Competition Finished\n\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
 
                     finish_message = await bot.send_photo(gid, image_fn,text,parse_mode=aiogram.types.ParseMode.HTML)
                     # print("finish_message: ", finish_message)
@@ -206,7 +207,8 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                         except KeyError:
                             print("get_winners : data error")
 
-                    caption = f"🎉Last Buy Competition Finished\n\n⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n{winners_message}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    comp_text = f"⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n{winners_message}"
+                    caption = f"🎉Last Buy Competition Finished\n\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
                     await bot.edit_message_text(caption, gid, comp_info['message_id'])
                     await bot.forward_message(gid, gid, comp_info['message_id'])
 
@@ -759,8 +761,9 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             link_event = f"https://t.me/BuyBotTracker"
 
             image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
+            comp_text= f"🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name})</i>🚀\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours"
             start_m = await bot.send_photo(gid, image_fn,
-            f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name})</i>🚀\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>", parse_mode=aiogram.types.ParseMode.HTML)
+            f"🎉Biggest Buy Competition Started\n\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>", parse_mode=aiogram.types.ParseMode.HTML)
             image_fn.close()
             await start_m.pin()
             # print("start_message: ", start_m)
@@ -827,8 +830,9 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
             link_event = f"https://t.me/BuyBotTracker"
 
             # image_fn = open(f"images/{comps[gid]['gif_image']}",'rb')
+            comp_text = f"⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name} 🚀"
             start_m = await bot.send_message(gid,
-            f"🎉Last Buy Competition (LIVE)\n\n⏳<code>{endin_time[0]}:{endin_time[1]}</code>remaining time!\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name} 🚀\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
+            f"🎉Last Buy Competition (LIVE)\n\n⏳<code>{endin_time[0]}:{endin_time[1]}</code>remaining time!\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>",parse_mode=aiogram.types.ParseMode.HTML)
             await start_m.pin()
             comps[gid]['last_buy_comp']['message_id'] = start_m.message_id
     update_comps_write()
