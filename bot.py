@@ -93,7 +93,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             link_chart=f'https://poocoin.app/tokens/{token_address}'
             link_event=f'https://t.me/BuyBotTracker'
             
-            if g_data['show_buys_w/out_comp'] == "on":
+            if g_data['show_buys_w/out_comp'] == "on" or g_data['ongoing'] == 'on':
                 emoji = g_data['buy_emoji']
                 params = {'groupId':gid}
                 res = r.post(url+"/getLatestEvent",data = params, verify = False)
