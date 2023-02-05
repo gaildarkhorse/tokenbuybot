@@ -131,7 +131,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                         res = res.json()
                         # print("get_lastbuy:", res)
                         buy_info = res["event"]
-                        if bool(buy_info) and int(buy_info['value'])>=g_data['min_buy']:
+                        if bool(buy_info) and float(buy_info['value'])>=g_data['min_buy']:
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
                             link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
                             
