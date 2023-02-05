@@ -55,8 +55,6 @@ Welcome to Tetra Trending Bot
 
 - Type /settings to show all available easy to use settings
 
-- Go Premium/Ad-Free by going to Premium Settings
-
 - Attach your telegram link by going to group settings
 
 - Type /comp to view the current buy contest leaderboard
@@ -154,7 +152,7 @@ initialcompvalue = {
             "token_name":"",
             "alt_token_name":"",
             "pair_address": "",
-            "show_buys_w/out_comp": "off",
+            "show_buys_w/out_comp": "on",
             "gif_image": "0.jpg",
             "buy_emoji": "😄",
             "min_buy": 10,
@@ -168,6 +166,8 @@ initialcompvalue = {
             "ongoing":"off",
             "comp_type":"big_buy_comp",
             "winners":{},
+            "comp_text":"",
+            "blacklist":{},
             "big_buy_comp": {
                 "length":3,
                 "min_buy":0.1,

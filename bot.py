@@ -27,8 +27,9 @@ def get_winners_message(winners,alt_token_name,chain,prize1):
     }
     for i, winner in enumerate(winners):
         win_message +=f"\n{win_order_gif[i]}<code>{winner['_id']}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
+    winner_list_info = win_message
     win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize1}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
-    return win_message
+    return winner_list_info, win_message
 def record_winners(winners,gid):
     prize = comps[gid][comps[gid]['comp_type']]['prize']
     if comps[gid]['comp_type']=="last_buy_comp":
@@ -72,8 +73,6 @@ def run_continuously(interval=1):
     return cease_continuous_run
 
 comps ={}
-comp_text = ""
-blacklist={}
 async def get_latest_buyinfo():#message: aiogram.types.Message=None):
     while 1:
         
@@ -153,7 +152,6 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             if comp_type == "big_buy_comp":
                 if r_time < 0:
                     comps[gid]["ongoing"] = "off"
-                    update_comps_write()
                     prize1 = comp_info['prize'][0]
                     winners_message = "➡️There was no buyer in competition"
                     params = {"groupId": str(gid),"compType": comp_type}
@@ -165,20 +163,22 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners",res)
                             winners = res['winners']
                             if len(winners)>0:
-                                winners_message = get_winners_message(winners,alt_token_name,chain,prize1)
+                                _,winners_message = get_winners_message(winners,alt_token_name,chain,prize1)
                                 record_winners(winners,gid)
                                  
                         except KeyError:
                             print("get_winners : data error")
 
                     image_fn = open(f"images/{g_data['gif_image']}",'rb')
-                    comp_text = f"🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}"
-                    text = f"🏁Biggest Buy Competition Finished\n\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    comp_text = f"🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends <code>{end_time} UTC</code>\n⏫Minimum Buy <code>{minbuy}</code>{alt_token_name}\n{winners_message}"
+                    text = f"{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
 
                     finish_message = await bot.send_photo(gid, image_fn,text,parse_mode=aiogram.types.ParseMode.HTML)
                     # print("finish_message: ", finish_message)
                     await bot.pin_chat_message(gid,finish_message.message_id,False)
                     image_fn.close()
+                    comps[gid]['comp_text'] = comp_text
+                    update_comps_write()
                     res = BotAPI(gid, g_data).stop()
                     print("stop_response :", res)
                     
@@ -192,7 +192,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
 
                 if r_time==0:
                     comps[gid]["ongoing"] = "off"
-                    update_comps_write()
+                    
                     prize1 = comp_info['prize']
                     winners_message ="🙁There is no winner"
 
@@ -203,15 +203,17 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                         try:
                             res = res.json()
                             print("get_winners",res)
-                            winners = res['winner']
-                            if len(winners)>0:
-                                winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                            winners = res['winners']
+                            if len(winners) > 0:
+                                _, winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
                                 record_winners(winners,gid)
                         except KeyError:
                             print("get_winners : data error")
 
-                    comp_text = f"⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n{winners_message}"
-                    caption = f"🎉Last Buy Competition Finished\n\n{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    comp_text = f"🎉Last Buy Competition Finished\n\n⏫Minimum Buy <code>{comp_info['min_buy']}{alt_token_name}</code>\n💰Winning Prize <code>{comp_info['prize']}</code>{alt_token_name} 🚀\n{winners_message}"
+                    caption = f"{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
+                    comps[gid]['comp_text'] = comp_text
+                    update_comps_write()
                     await bot.edit_message_text(caption, gid, comp_info['message_id'])
                     await bot.forward_message(gid, gid, comp_info['message_id'])
 
@@ -297,6 +299,88 @@ async def show_comp(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
     reset_status(gid)
+    
+    
+    comps[gid]['status']=''
+    if comps[gid]['ongoing']=='off':
+        if comps[gid]['comp_text']=='':
+            await message.reply("❗️ There is no competion yet")
+        else:
+            await message.reply(comps[gid]['comp_text'])#+"\n\n🕓Last Buy Competition Finished!")
+    else:
+        comp_type = comps[gid]['comp_type']
+        if comp_type == "big_buy_comp":
+            comp_data = comps[gid]['big_buy_comp']
+            start_time =  datetime.utcfromtimestamp(comp_data['start_time']).strftime("%H:%M:%S %Z")
+            remain_t = comp_data['start_time'] + comp_data['length']*60-time.time()
+            endin_time = [int(remain_t/60), int(remain_t) % 60]
+            
+            winners_message = "➡️There was no buyer in competition"
+            r = requests.Session()
+            url = "https://tetra.tg.api.cryptosnowprince.com/api"
+            params = {"groupId": str(gid),"compType": comp_type}
+            res = r.post(url+"/winners",data = params, verify = False)
+            print("get_winners_response: ", res)
+
+            winner_list_info=""
+            current_winner_address=""
+            if res.status_code == 200:
+                try:
+                    res = res.json()
+                    print("get_winners",res)
+                    winners = res['winners']
+                    
+                    if len(winners)>0:
+                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
+                        current_winner_address=winners[0][_id]
+                        # record_winners(winners,gid)
+                except KeyError:
+                    print("get_winners : data error")
+
+            comp_text= f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name},3rd</i> <code>{comp_data['prize'][2]}</code><i>{alt_token_name})</i>🚀\nCurrent Winner <code>{current_winner_address}</code>\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
+
+            comp_m = await message.reply(gid, comp_text, parse_mode=aiogram.types.ParseMode.HTML)
+        else:
+            comp_data = comps[gid]['last_buy_comp']
+            start_time =  datetime.utcfromtimestamp(comp_data['start_time']).strftime("%H:%M:%S %Z")
+            remain_t = comp_data['start_time'] + comp_data['countdown']*60-time.time()
+            endin_time = [int(remain_t/60), int(remain_t) % 60]
+            
+            winners_message = "➡️There was no buyer in competition"
+            r = requests.Session()
+            url = "https://tetra.tg.api.cryptosnowprince.com/api"
+            params = {"groupId": str(gid),"compType": comp_type}
+            res = r.post(url+"/winners",data = params, verify = False)
+            print("get_winners_response: ", res)
+
+            winner_list_info=""
+            current_winner_address=""
+            if res.status_code == 200:
+                try:
+                    res = res.json()
+                    print("get_winners",res)
+                    winners = res['winners']
+                    
+                    if len(winners)>0:
+                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
+                        current_winner_address=winners[0][_id]
+                        # record_winners(winners,gid)
+                except KeyError:
+                    print("get_winners : data error")
+
+            comp_text= f"🎉Last Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name}🚀\nCurrent Winner <code>{current_winner_address}</code>\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
+
+            comp_m = await message.reply(gid, comp_text, parse_mode=aiogram.types.ParseMode.HTML)
+    update_comps_write()
+
+
+
+
+
+
+
+    
+    comp_text = comps[gid]['comp_text']
     if comp_text == "":
         await message.reply("❗️ There is no competion yet")
         return
@@ -515,11 +599,12 @@ async def handle_input(message: aiogram.types.Message):
         if not verify_token_address(message.text):
             text = "❗️ Wallet address not valid"
         else:
+            blacklist = comps[gid]['blacklist']
             if message.text in blacklist.keys() and blacklist[message.text]:
-                blacklist[message.text] = False
+                comps[gid]['blacklist'][message.text] = False
                 text = f"✅Wallet re-qualified for ongoing biggest buy competition.\n\nWallet:<code>{message.text}</code>"
             else:
-                blacklist[message.text] = True
+                comps[gid]['blacklist'][message.text] = True
                 text = f"✅Wallet disqualified for ongoing biggest buy competition.\n\nWallet:<code>{message.text}</code>"
         await message.reply(text)
     elif comps[gid]['status'] == "wait_paytxn":
@@ -544,9 +629,10 @@ async def handle_input(message: aiogram.types.Message):
                         await message.reply("❗️ Not found any payment info")
                     else:
                         winner_hash=""
-                        winners_info=comps[gid]['winners']
-                        for key in winners_info.keys():
-                            if winners_info['address']==res['receipent'] and str(winners_info['prize'])==res['amount'] and winners_info['alt_token_name']==res['symbol']:
+                        
+                        for key in comps[gid]['winners'].keys():
+                            winners_info=comps[gid]['winners'][key]
+                            if winners_info['address']==res['receipent'] and winners_info['prize']==res['amount'] and winners_info['alt_token_name']==res['symbol']:
                                 winner_hash = key
                                 comps[gid]['winners'][winner_hash]['pay_tx'] = message.text
                                 await show_winners(message)
@@ -583,10 +669,9 @@ async def remove_token(call: aiogram.types.CallbackQuery):
     BotAPI(gid,comps[gid]).stop()
     comps[gid]["ongoing"] = "off"
     comps[gid]["winners"] = {}
+    comps[gid]['comp_text']=""
+    comps[gid]['blacklist']={}
     reset_status(gid)
-    blacklist = {}
-    comp_text =""
-
 
 @dp.callback_query_handler(lambda call: call.data == "show_winners_sendtxn")
 async def ask_for_tx(call: aiogram.types.CallbackQuery):
@@ -797,6 +882,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         else:
             comps[gid]['ongoing'] = 'on'
             comps[gid]['big_buy_comp']['start_time']= time.time()
+            comps[gid]['status']=''
             comps[gid]['comp_type'] = 'big_buy_comp'
             alt_token_name = comps[gid]['alt_token_name']
             comp_data = comps[gid]['big_buy_comp']
@@ -941,8 +1027,6 @@ def update_comps_write():
         
 def update_comps_read():
     global comps
-    global comp_text
-    global blacklist
     with open("./data/comps.json", 'r') as read_comps:
         comps = json.load(read_comps)
         temp_dict = {}
@@ -950,14 +1034,14 @@ def update_comps_read():
             temp_dict[int(key)] = comps[key]
             temp_dict[int(key)]["ongoing"] = "off"
             temp_dict[int(key)]["status"] = ""
+            temp_dict[int(key)]["blacklist"] = {}
             
             
             
         
         comps = temp_dict
         temp_dict = {}
-    comp_text = ""
-    blacklist = {}
+
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
         "token_name": "Cake",
         "alt_token_name": "BNB",
         "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
-        "show_buys_w/out_comp": "off",
+        "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 10,
@@ -19,29 +19,19 @@
         },
         "ongoing": "off",
         "comp_type": "big_buy_comp",
-        "winners": {
-            "63ded185a0ff21480605be7b": {
-                "address": "0x6fcc682d1ee497bb73b2650fb14844b4ba194ff0",
-                "amount": 0.25,
-                "token_name": "Cake",
-                "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-                "prize": 0.0001,
-                "alt_token_name": "BNB",
-                "chain": "BSC",
-                "comp_type": "big_buy_comp",
-                "pay_tx": ""
-            }
-        },
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
         "big_buy_comp": {
-            "length": 1,
+            "length": 3,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
-                0.0001,
-                5e-05,
-                5e-05
+                1,
+                0.2,
+                0.1
             ],
-            "start_time": 1675551318.2988691,
+            "start_time": 1675592509.1343296,
             "end_time": 0
         },
         "last_buy_comp": {
