@@ -225,20 +225,6 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             # await bot.send_message(0,"buy fail")
         
 
-
-
-async def job():
-    
-    while 1:    
-        print("I'm running on thread %s" % datetime.now().strftime("%H:%M:%S"))
-        text= datetime.now().strftime("%H:%M:%S")
-        await bot.edit_message_text(text,-1001661521028)
-        await asyncio.sleep(1)
-
-def run_threaded(job_func):
-    job_thread = threading.Thread(target=job_func)
-    job_thread.start()
-
 def verify_token_address(addr):
     return addr.startswith("0x") and len(addr[2:])==40 and all(c in string.hexdigits for c in addr[2:].lower())
 def if_init(gid):
@@ -270,6 +256,10 @@ async def remove_message(message: aiogram.types.Message):
     keyb = keyboards.Keyboards().remove()
     gid = message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await message.reply("❌Only admins can remove token from chat")
+        return
     reset_status(gid)
     print(gid,message.from_user.first_name, message.text)
     await bot.send_message(gid, messages.remove_confirm_message, reply_to_message_id=message.message_id,reply_markup = keyb)
@@ -292,6 +282,9 @@ async def start_message(message: aiogram.types.Message):
 async def change_settings(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
+    # if not c_m.is_chat_admin():
+    #     await message.reply("❌Only admins can remove token from chat")
+    #     return
     reset_status(gid)
     if comps[gid]['alt_token_name']=="" or comps[gid]['token_address']=="":
         await bot.send_message(gid, "Firstly type /add to start tracking your coin", reply_to_message_id=message.message_id)
@@ -389,6 +382,10 @@ async def show_comp(message: aiogram.types.Message):
 async def show_winners(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
+    if not c_m.is_chat_admin():
+        await message.reply("❌Only admins can set this")
+        return
     reset_status(gid)
     keyb = keyboards.Keyboards().disq_keys()
     await message.reply("⬇️Select competition type to disqualify a wallet from ongoing competition",reply_markup=keyb)
@@ -425,6 +422,10 @@ async def show_winners(message: aiogram.types.Message):
 async def add_message(message: aiogram.types.Message):
     gid = message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
+    if not c_m.is_chat_admin():
+        await message.reply("❌Only admins can add token from chat")
+        return
     reset_status(gid)
     print(gid,message.from_user.first_name, message.text)
     if comps[gid]['token_address'] and comps[gid]['token_name']:
@@ -437,17 +438,41 @@ async def add_message(message: aiogram.types.Message):
                            reply_markup = keyb,
                            reply_to_message_id=message.message_id)
 
-# @dp.message_handler()
-# async def handle_any(message: aiogram.types.Message):
-#     print("anything:" , message )
+@dp.message_handler(content_types=aiogram.types.ContentType.PHOTO)
+async def scan_message(message: aiogram.types.Message):
+    print("message ", message)
+    gid = message.chat.id
+    if_init(gid)
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
+    if not c_m.is_chat_admin():
+        return
+    # print("status", comps[gid]["status"])
+    if comps[gid]["status"] == "wait_bot_gif":
+    # if comps[gid]["status"] == "":
+        if message.photo:
+            # print("message: ", message)
+            # await bot.download_file(message.photo.file_id,f'{gid}.png')
+            await bot.download_file_by_id(message.photo[-1]['file_id'],f'images/{gid}.png')
+            print("photo downloaded")
+            comps[gid]['gif_image']=f"{gid}.png"
+            c, k = get_settings_menuvalue("buybot", gid)
+            await bot.send_message(gid,c,reply_markup=k)
+        else:
+            await message.reply("❌Input file not valid. Try again")
+        reset_status(gid)
 
 @dp.message_handler(
     lambda message: (message.text not in config.commands and not message.text.startswith("/")))
 async def handle_input(message: aiogram.types.Message):
-    # print(message)
+    print(message)
     
     gid = message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
+    # print(c_m.is_chat_admin())
+    if not c_m.is_chat_admin():
+        # await message.reply("❌Only admins can add token from chat")
+        return
     print(gid,message.from_user.first_name, message.text)
     if comps[gid]["status"] == "wait_token_address":
         if verify_token_address(message.text):
@@ -482,9 +507,12 @@ async def handle_input(message: aiogram.types.Message):
             c,k = get_settings_menuvalue("tokengroup",gid)
             await message.reply(c,reply_markup=k)
     elif comps[gid]["status"] == "wait_bot_gif":
+        print("wait_gif")
         if message.photo:
-            print("message: ", message)
-            await message.download_media('test.png')
+            # print("message: ", message)
+            # await bot.download_file(message.photo.file_id,f'{gid}.png')
+            await bot.download_file_by_id(message.photo[0]['file_id'],f'images/{gid}.png')
+            print("photo downloaded")
             comps[gid]['gif_image']=f"{gid}.png"
             c, k = get_settings_menuvalue("buybot", gid)
             await bot.send_message(gid,c,reply_markup=k)
@@ -643,12 +671,14 @@ async def handle_input(message: aiogram.types.Message):
     
 @dp.callback_query_handler(lambda call: call.data == "remove_token")
 async def remove_token(call: aiogram.types.CallbackQuery):
+    
     gid = call.message.chat.id
     if_init(gid)
-    
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     print(gid,call.message.from_user.first_name, call.data)
-    admins = await bot.get_chat_administrators(gid)
-    print("admins: ", admins)
     if comps[gid]["token_address"] != "":
         await bot.send_message(gid, messages.remove_done_message[0])
     else:
@@ -669,6 +699,10 @@ async def remove_token(call: aiogram.types.CallbackQuery):
 async def ask_for_tx(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     print(gid,call.message.from_user.first_name, call.data)
     comps[gid]["status"] = "wait_paytxn"
     await bot.send_message(gid,"➡️Send tx link to proof any payment to winner")
@@ -680,7 +714,10 @@ async def ask_for_tx(call: aiogram.types.CallbackQuery):
 async def select_pair(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
-    
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     print(gid,call.message.from_user.first_name, call.data)
     c_data = call.data.split("_")
     token_name = c_data[2].split("/")[0]
@@ -704,6 +741,10 @@ async def select_pair(call: aiogram.types.CallbackQuery):
 async def disq_wallet_input(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     if not (token_address and chain):
@@ -720,6 +761,10 @@ async def disq_wallet_input(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     if not (token_address and chain):
@@ -749,7 +794,7 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
         comps[gid]['status'] = "wait_bot_buystep"
         await bot.send_message(gid,"➡️Send new buy step")
     elif c_data == "gif":
-        comps[gid]['status'] = "wait_bot_buystep"
+        comps[gid]['status'] = "wait_bot_gif"
         await bot.send_message(gid,"➡️Send Buy Gif")
     elif c_data == "tokengrouppref":
         comps[gid]['status'] = ""
@@ -770,6 +815,10 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def settings_tokengroup(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
@@ -809,6 +858,10 @@ async def settings_tokengroup(call: aiogram.types.CallbackQuery):
 async def select_chart(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
@@ -828,6 +881,10 @@ async def select_chart(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
@@ -903,6 +960,10 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def settings_buybot(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     c_data = call.data.split("_")[2]
@@ -972,6 +1033,10 @@ async def settings_buybot(call: aiogram.types.CallbackQuery):
 async def select_settings_menu(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
     print(gid,call.message.from_user.first_name, call.data)
@@ -995,6 +1060,10 @@ async def select_settings_menu(call: aiogram.types.CallbackQuery):
 async def select_chain(call: aiogram.types.CallbackQuery):
     gid = call.message.chat.id
     if_init(gid)
+    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    if not c_m.is_chat_admin():
+        await bot.answer_callback_query(call.id,"This command only available for administrators",True)
+        return
     chain = call.data.split('_')[2].upper()
     await bot.send_message(gid,"➡️["+chain+"]"+messages.token_address_question)
     comps[gid]["status"] = "wait_token_address"

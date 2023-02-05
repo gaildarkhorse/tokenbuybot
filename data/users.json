@@ -1,83 +1,65 @@
 {
-    "winners": {
-        "63ded185a0ff21480605be7b": {
-            "address": "0x6fcc682d1ee497bb73b2650fb14844b4ba194ff0",
-            "amount": 0.25,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 0.0001,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
+    "id": "3078020114919782758",
+    "from": {
+        "id": 5011624700,
+        "is_bot": false,
+        "first_name": "LYZ",
+        "username": "maxellman",
+        "language_code": "en"
+    },
+    "message": {
+        "message_id": 3451,
+        "from": {
+            "id": 6116655105,
+            "is_bot": true,
+            "first_name": "Tetra Trending Bot",
+            "username": "TetraTrendingBot"
         },
-        "63ded20312d010f3690fe9e8": {
-            "address": "0x32c978316485bb75f6ace727a6071c1f9ed291ec",
-            "amount": 0.07,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 5e-05,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
+        "chat": {
+            "id": -1001661521028,
+            "title": "aiogrambot_play",
+            "username": "aiogrambottest2023",
+            "type": "supergroup"
         },
-        "63ded22a12d010f3690fe9fb": {
-            "address": "0x7a028a1e842effa9ef45e2764b5bb910111378b0",
-            "amount": 0.049528800982502924,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 5e-05,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
+        "date": 1675623296,
+        "message_thread_id": 3450,
+        "reply_to_message": {
+            "message_id": 3450,
+            "from": {
+                "id": 5011624700,
+                "is_bot": false,
+                "first_name": "LYZ",
+                "username": "maxellman",
+                "language_code": "en"
+            },
+            "chat": {
+                "id": -1001661521028,
+                "title": "aiogrambot_play",
+                "username": "aiogrambottest2023",
+                "type": "supergroup"
+            },
+            "date": 1675623295,
+            "text": "/remove",
+            "entities": [
+                {
+                    "type": "bot_command",
+                    "offset": 0,
+                    "length": 7
+                }
+            ]
         },
-        "63dede0d21e9d84795697946": {
-            "address": "0xf501692a88bd74127ee896d209b4753436409bc0",
-            "amount": 0.05030673525,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 0.0001,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
-        },
-        "63dede5221e9d84795697964": {
-            "address": "0x582aa630b74640616baab9808b747fdf790ac049",
-            "amount": 0.02879547791938748,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 5e-05,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
-        },
-        "63dede0721e9d84795697940": {
-            "address": "0xba0f01616d87558b81c797da0871a0d0bdabfe85",
-            "amount": 0.01338239269240517,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 5e-05,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
-        },
-        "63dee2592110ef2715153289": {
-            "address": "0x75fe7970dfb75f3a24baeca7ccea6e12ad225981",
-            "amount": 0.02420132594802699,
-            "token_name": "Cake",
-            "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-            "prize": 0.0001,
-            "alt_token_name": "BNB",
-            "chain": "BSC",
-            "comp_type": "big_buy_comp",
-            "pay_tx": ""
+        "text": "❔Are you sure remove all settings, competitions and token from chat?",
+        "reply_markup": {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "➡️ YES! Remove Token",
+                        "callback_data": "remove_token"
+                    }
+                ]
+            ]
         }
     },
-    "tx": "0x58f6f40fee1b78bedda8a753758255206d368a182ebcf5d70baa0ca93e31aed9",
-    "chainId": "56"
+    "chat_instance": "-4408990770352839119",
+    "data": "remove_token"
 }
