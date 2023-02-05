@@ -17,6 +17,9 @@ bot = aiogram.Bot(token = config.API_TOKEN,
 loop = asyncio.get_event_loop()
 dp = aiogram.Dispatcher(bot, loop = loop)
 
+def format_address(addr):
+    return addr[0:6]+"..."+addr[-4:]
+    
 def get_winners_message(winners,alt_token_name,chain,prize1):
     winner_address = winners[0]['_id'] 
     win_message=""
@@ -26,7 +29,7 @@ def get_winners_message(winners,alt_token_name,chain,prize1):
         2:"🥉"
     }
     for i, winner in enumerate(winners):
-        win_message +=f"\n{win_order_gif[i]}<code>{winner['_id']}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
+        win_message +=f"\n{win_order_gif[i]}<code>{format_address(winner['_id'])}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
     winner_list_info = win_message
     win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize1}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
     return winner_list_info, win_message
@@ -321,7 +324,9 @@ async def show_comp(message: aiogram.types.Message):
             params = {"groupId": str(gid),"compType": comp_type}
             res = r.post(url+"/winners",data = params, verify = False)
             print("get_winners_response: ", res)
-
+            alt_token_name = comps[gid]['alt_token_name']
+            prize1 = comp_data['prize'][0]
+            chain = comps[gid]['chain']
             winner_list_info=""
             current_winner_address=""
             if res.status_code == 200:
@@ -332,14 +337,16 @@ async def show_comp(message: aiogram.types.Message):
                     
                     if len(winners)>0:
                         winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
-                        current_winner_address=winners[0][_id]
+                        current_winner_address=winners[0]['_id']
                         # record_winners(winners,gid)
                 except KeyError:
                     print("get_winners : data error")
+            current_winner_m =""
+            if current_winner_address:
+                 current_winner_m = f"\n🎖Current Winner <code>{current_winner_address}</code>"
+            comp_text= f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name},3rd</i> <code>{comp_data['prize'][2]}</code><i>{alt_token_name})</i>🚀{current_winner_m}\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
 
-            comp_text= f"🎉Biggest Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize'][0]}</code>{alt_token_name} <i>(2nd</i> <code>{comp_data['prize'][1]}</code><i>{alt_token_name},3rd</i> <code>{comp_data['prize'][2]}</code><i>{alt_token_name})</i>🚀\nCurrent Winner <code>{current_winner_address}</code>\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
-
-            comp_m = await message.reply(gid, comp_text, parse_mode=aiogram.types.ParseMode.HTML)
+            comp_m = await message.reply(comp_text)
         else:
             comp_data = comps[gid]['last_buy_comp']
             start_time =  datetime.utcfromtimestamp(comp_data['start_time']).strftime("%H:%M:%S %Z")
@@ -352,7 +359,9 @@ async def show_comp(message: aiogram.types.Message):
             params = {"groupId": str(gid),"compType": comp_type}
             res = r.post(url+"/winners",data = params, verify = False)
             print("get_winners_response: ", res)
-
+            alt_token_name = comps[gid]['alt_token_name']
+            prize1 = comp_data['prize']
+            chain = comps[gid]['chain']
             winner_list_info=""
             current_winner_address=""
             if res.status_code == 200:
@@ -363,35 +372,17 @@ async def show_comp(message: aiogram.types.Message):
                     
                     if len(winners)>0:
                         winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
-                        current_winner_address=winners[0][_id]
+                        current_winner_address=winners[0]['_id']
                         # record_winners(winners,gid)
                 except KeyError:
                     print("get_winners : data error")
+            current_winner_m =""
+            if current_winner_address:
+                 current_winner_m = f"\n🎖Current Winner <code>{current_winner_address}</code>"
+            comp_text= f"🎉Last Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name}🚀{current_winner_m}\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
 
-            comp_text= f"🎉Last Buy Competition Started\n\n🕓 Start at <code>{start_time} UTC</code>\n⏳Ends in <code>{endin_time[0]}</code>min <code>{endin_time[1]}</code>sec\n⏫Minimum Buy <code>{comp_data['min_buy']}{alt_token_name}</code>\n\n{winner_list_info}\n\n💰Winning Prize <code>{comp_data['prize']}</code>{alt_token_name}🚀\nCurrent Winner <code>{current_winner_address}</code>\n💎Winner must hold at least <code>{comp_data['must_hold']}</code> hours\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
-
-            comp_m = await message.reply(gid, comp_text, parse_mode=aiogram.types.ParseMode.HTML)
+            comp_m = await message.reply(comp_text)
     update_comps_write()
-
-
-
-
-
-
-
-    
-    comp_text = comps[gid]['comp_text']
-    if comp_text == "":
-        await message.reply("❗️ There is no competion yet")
-        return
-    if comps[gid]['ongoing']=='off':
-        text = "🏁Biggest Buy Competition Finished\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Finished</a>"
-    else:
-        if comps[gid]['comp_type']=="big_buy_comp":
-            text = "🏁Biggest Buy Competition Started\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Finished</a>\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
-        else:
-            text = "🏁Biggest Buy Competition Finished\n\n" + comp_text + "\n\n🕓<a href='https://t.me/aiogrambottest2023'>Last Buy Competition Live</a>\n\n🪄Use /disq to disqualify a wallet from ongoing competition"
-    await message.reply(text)
 
 @dp.message_handler(commands = ['disq'])
 async def show_winners(message: aiogram.types.Message):

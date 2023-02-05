@@ -6,21 +6,55 @@
         "token_name": "Cake",
         "alt_token_name": "BNB",
         "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
-        "show_buys_w/out_comp": "on",
+        "show_buys_w/out_comp": "off",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
-        "min_buy": 10,
-        "buy_step": 5,
+        "min_buy": 2,
+        "buy_step": 1,
         "token_group_pref": {
             "group_link": "",
             "notify_whale_buy": "off",
             "selected_chart": "PooCoin",
             "circulating_supply": ""
         },
-        "ongoing": "off",
-        "comp_type": "big_buy_comp",
-        "winners": {},
-        "comp_text": "",
+        "ongoing": "on",
+        "comp_type": "last_buy_comp",
+        "winners": {
+            "63df8793f24dbd71bcde5091": {
+                "address": "0x2f1c24dc3e52a914e204570500b4c216e423eb1c",
+                "amount": 3.381638510212669,
+                "token_name": "Cake",
+                "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+                "prize": 1,
+                "alt_token_name": "BNB",
+                "chain": "BSC",
+                "comp_type": "big_buy_comp",
+                "pay_tx": ""
+            },
+            "63df87b4f24dbd71bcde50ac": {
+                "address": "0x8b21d05b87eb5639b096989f4d8da6a3ae346d58",
+                "amount": 0.9420722245813922,
+                "token_name": "Cake",
+                "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+                "prize": 0.2,
+                "alt_token_name": "BNB",
+                "chain": "BSC",
+                "comp_type": "big_buy_comp",
+                "pay_tx": ""
+            },
+            "63df8799f24dbd71bcde5097": {
+                "address": "0xc9eb0a118a19077e3cbd56d1a87403f98fa5c310",
+                "amount": 0.17,
+                "token_name": "Cake",
+                "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+                "prize": 0.1,
+                "alt_token_name": "BNB",
+                "chain": "BSC",
+                "comp_type": "big_buy_comp",
+                "pay_tx": ""
+            }
+        },
+        "comp_text": "🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>10:39:34 UTC</code>\n⏳Ends <code>10:42:34 UTC</code>\n⏫Minimum Buy <code>0.1</code>BNB\n\n🥇<code>0x2f1c24dc3e52a914e204570500b4c216e423eb1c</code> ➖ <code>3.381638510212669BNB</code>\n🥈<code>0x8b21d05b87eb5639b096989f4d8da6a3ae346d58</code> ➖ <code>0.9420722245813922BNB</code>\n🥉<code>0xc9eb0a118a19077e3cbd56d1a87403f98fa5c310</code> ➖ <code>0.17BNB</code>\n\n🎊Congrats to <code>0x2f1c24dc3e52a914e204570500b4c216e423eb1c</code>wins <code>1BNB</code>\n🎖Winner address0x2f1c24dc3e52a914e204570500b4c216e423eb1c\n#️⃣Waiting payment txn as proof.../winners\n",
         "blacklist": {},
         "big_buy_comp": {
             "length": 3,
@@ -31,17 +65,17 @@
                 0.2,
                 0.1
             ],
-            "start_time": 1675592509.1343296,
+            "start_time": 1675593574.4288244,
             "end_time": 0
         },
         "last_buy_comp": {
-            "countdown": 3,
+            "countdown": 10,
             "min_buy": 0.1,
-            "prize": 1,
+            "prize": 0.005,
             "must_hold": 1,
-            "start_time": 0,
+            "start_time": 1675594470.9462075,
             "end_time": 0,
-            "message_id": 0
+            "message_id": 2632
         }
     }
 }
