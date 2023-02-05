@@ -135,7 +135,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
                             link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
                             
-                            emoji_count = int(buy_info['value']/g_data['buy_step'])
+                            emoji_count = int(float(buy_info['value'])/g_data['buy_step'])
                             if emoji_count>100:emoji_count=100
                             buy_message=f"<b>{token_name} ({chain}) </b>Buy!\n{emoji*emoji_count}\n\n💵{buy_info['alt_token_amount']}{alt_token_name} (${buy_info['value']})\n🪙{buy_info['token_amount']} {g_data['token_name']}\n🪪<a href='{link_buyer}'>{buy_info['buyer_address'][0:5]}...{buy_info['buyer_address'][-3:]}</a><code>|</code><a href='{link_txn}'>Txn</a><code>|</code><a href='{link_track}'>Track</a>\n🔘Market Cap ${buy_info['marketcap']}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
  
