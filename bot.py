@@ -101,7 +101,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             g_data = comps[gid]
             chain = g_data['chain']
             token_address = g_data['token_address']
-            if not (token_address and chain):
+            if not (token_address and chain and g_data['pair_address']):
                 continue
             
             comp_type = g_data['comp_type']

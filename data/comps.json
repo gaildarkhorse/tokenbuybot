@@ -1,56 +1,11 @@
 {
     "-1001661521028": {
-        "status": "wait_token_address",
-        "chain": "BSC",
-        "token_address": "",
-        "token_name": "",
-        "alt_token_name": "",
-        "pair_address": "",
-        "show_buys_w/out_comp": "off",
-        "gif_image": "-1001661521028.png",
-        "buy_emoji": "😙",
-        "min_buy": 100,
-        "buy_step": 100,
-        "token_group_pref": {
-            "group_link": "",
-            "notify_whale_buy": "off",
-            "selected_chart": "PooCoin",
-            "circulating_supply": ""
-        },
-        "ongoing": "off",
-        "comp_type": "last_buy_comp",
-        "winners": {},
-        "comp_text": "",
-        "blacklist": {},
-        "big_buy_comp": {
-            "length": 1,
-            "min_buy": 0.1,
-            "must_hold": 1,
-            "prize": [
-                1,
-                0.2,
-                0.1
-            ],
-            "start_time": 1675616148.2643015,
-            "end_time": 0
-        },
-        "last_buy_comp": {
-            "countdown": 10,
-            "min_buy": 0.005,
-            "prize": 0.005,
-            "must_hold": 1,
-            "start_time": 1675620221.5327172,
-            "end_time": 0,
-            "message_id": 3443
-        }
-    },
-    "5011624700": {
         "status": "",
-        "chain": "",
-        "token_address": "",
-        "token_name": "",
-        "alt_token_name": "",
-        "pair_address": "",
+        "chain": "BSC",
+        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_name": "Cake",
+        "alt_token_name": "BNB",
+        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
@@ -68,15 +23,60 @@
         "comp_text": "",
         "blacklist": {},
         "big_buy_comp": {
-            "length": 3,
+            "length": 20,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
-                1,
+                0.001,
                 0.2,
                 0.1
             ],
+            "start_time": 1675627381.629653,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 1,
+            "must_hold": 1,
             "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "5011624700": {
+        "status": "",
+        "chain": "BSC",
+        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_name": "Cake",
+        "alt_token_name": "BNB",
+        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 20,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.001,
+                0.2,
+                0.1
+            ],
+            "start_time": 1675627381.629653,
             "end_time": 0
         },
         "last_buy_comp": {
