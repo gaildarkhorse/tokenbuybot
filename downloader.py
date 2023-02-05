@@ -39,7 +39,7 @@ class BotAPI:
             return self.pairs
         # print(self.data)
         params = {'groupId':str(self.gid),'tokenAddress': self.data["token_address"], "chainId":chainIds[self.data["chain"]]}
-        # print(params)
+        print(params)
         # print(json.dumps(params, indent = 4))
         
         self.response = self.r.post("https://tetra.tg.api.cryptosnowprince.com/api/getPairs",  data=params , verify=False)

@@ -531,17 +531,27 @@ async def handle_input(message: aiogram.types.Message):
             chainId = chainIds[message.text[8:11]]
             r = requests.Session()
             url = "https://tetra.tg.api.cryptosnowprince.com/api/verify"
-            params = {"winners":comps[gid]["winners"], "tx": message.text.split("tx/")[1], "chainId":chainId}
+            params = {"tx": message.text.split("tx/")[1], "chainId":chainId}
             # print("verify_params: ", params)
+
             res = r.post(url,data = params, verify=False)
             print("verify_response :", res)
             if res.status_code == 200:
                 try:
                     res = res.json()
                     print("verify_response :", res)
-                    winner_hash = res["winnerHash"]
-                    comps[gid]['winners'][winner_hash]['pay_tx'] = message.text
-                    await show_winners(call.message)
+                    if res['receipent']=='':
+                        await message.reply("❗️ Not found any payment info")
+                    else:
+                        winner_hash=""
+                        winners_info=comps[gid]['winners']
+                        for key in winners_info.keys():
+                            if winners_info['address']==res['receipent'] and str(winners_info['prize'])==res['amount'] and winners_info['alt_token_name']==res['symbol']:
+                                winner_hash = key
+                                comps[gid]['winners'][winner_hash]['pay_tx'] = message.text
+                                await show_winners(message)
+                        if winner_hash=="":
+                            await message.reply("❗️ Not found any payment info")
                 except KeyError:
                     await message.reply("❗️ Not found any payment info")
             else:
