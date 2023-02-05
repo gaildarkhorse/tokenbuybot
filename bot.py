@@ -129,8 +129,9 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 if res.status_code == 200:
                     try:
                         res = res.json()
-                        # print("get_lastbuy:", res)
                         buy_info = res["event"]
+                        print("get_lastbuy:", res)
+
                         if bool(buy_info) and float(buy_info['value'])>=g_data['min_buy']:
                             link_buyer=f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
                             link_txn=f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
@@ -145,10 +146,10 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
 
                     except KeyError:
                         pass
-                        # print("get_lastbuy : data error")
+                        print("get_lastbuy : data error")
                 else:
                     pass
-                    # print("get_lastbuy : fail")
+                    print("get_lastbuy : fail")
 
             if g_data['ongoing'] == 'off':
                 continue

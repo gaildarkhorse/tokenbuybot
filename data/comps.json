@@ -6,7 +6,7 @@
         "token_name": "Cake",
         "alt_token_name": "BNB",
         "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
-        "show_buys_w/out_comp": "off",
+        "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
         "min_buy": 1,
@@ -35,13 +35,13 @@
             "end_time": 0
         },
         "last_buy_comp": {
-            "countdown": 2,
+            "countdown": 3,
             "min_buy": 0.005,
             "prize": 0.005,
             "must_hold": 1,
-            "start_time": 1675600999.1178901,
+            "start_time": 1675602402.4837663,
             "end_time": 0,
-            "message_id": 2797
+            "message_id": 2872
         }
     }
 }
