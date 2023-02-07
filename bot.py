@@ -20,8 +20,8 @@ dp = aiogram.Dispatcher(bot, loop = loop)
 def format_address(addr):
     return addr[0:6]+"..."+addr[-4:]
     
-def get_winners_message(winners,alt_token_name,chain,prize1):
-    winner_address = winners[0]['_id'] 
+def get_winners_message(winners,alt_token_name,chain,prize):
+    # winner_address = winners[0]['_id'] 
     win_message=""
     win_order_gif ={
         0:"🥇",
@@ -31,7 +31,15 @@ def get_winners_message(winners,alt_token_name,chain,prize1):
     for i, winner in enumerate(winners):
         win_message +=f"\n{win_order_gif[i]}<code>{format_address(winner['_id'])}</code> ➖ <code>{winner['amount']}{alt_token_name}</code>"
     winner_list_info = win_message
-    win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize1}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣Waiting payment txn as proof.../winners\n"
+    
+    for i, winner in enumerate(winners):
+        winner_address = winners[i]['_id']
+        if winner['pay_tx']:
+            pay_info = "Waiting payment txn as proof.../winners"
+        else:
+            pay_info = f"<a href ='winner['pay_tx']'>Payment Transaction</a>"
+        win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize[i]}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣{pay_info}\n"
+
     return winner_list_info, win_message
 def record_winners(winners,gid):
     prize = comps[gid][comps[gid]['comp_type']]['prize']
@@ -48,7 +56,7 @@ def record_winners(winners,gid):
             "alt_token_name":comps[gid]["alt_token_name"],
             "chain":comps[gid]["chain"],
             "comp_type":comps[gid]["comp_type"],
-            "pay_tx":""
+            "pay_tx":winner['pay_tx']
         }
 
 def run_continuously(interval=1):
@@ -156,9 +164,9 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             if comp_type == "big_buy_comp":
                 if r_time < 0:
                     comps[gid]["ongoing"] = "off"
-                    prize1 = comp_info['prize'][0]
+                    prize = comp_info['prize']
                     winners_message = "➡️There was no buyer in competition"
-                    params = {"groupId": str(gid),"compType": comp_type}
+                    params = {"groupId": str(gid),"compType": comp_type,"pay":True}
                     res = r.post(url+"/winners",data = params, verify = False)
                     print("get_winners_response: ", res)
                     if res.status_code == 200:
@@ -167,7 +175,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners",res)
                             winners = res['winners']
                             if len(winners)>0:
-                                _,winners_message = get_winners_message(winners,alt_token_name,chain,prize1)
+                                _,winners_message = get_winners_message(winners,alt_token_name,chain,prize)
                                 record_winners(winners,gid)
                                  
                         except KeyError:
@@ -197,10 +205,10 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                 if r_time==0:
                     comps[gid]["ongoing"] = "off"
                     
-                    prize1 = comp_info['prize']
+                    prize = [comp_info['prize']]
                     winners_message ="🙁There is no winner"
 
-                    params = {"groupId": str(gid),"compType": comp_type}
+                    params = {"groupId": str(gid),"compType": comp_type, "pay": True}
                     res = r.post(url+"/winners",data = params, verify = False)
                     print("get_winners_response: ", res)
                     if res.status_code == 200:
@@ -209,7 +217,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                             print("get_winners",res)
                             winners = res['winners']
                             if len(winners) > 0:
-                                _, winners_message = get_winners_message(winners,alt_token_name,chain,prize1) 
+                                _, winners_message = get_winners_message(winners,alt_token_name,chain,prize) 
                                 record_winners(winners,gid)
                         except KeyError:
                             print("get_winners : data error")
@@ -251,12 +259,23 @@ def get_settings_menuvalue(setting, gid):
     return caption, keyb
 
 
+@dp.message_handler(commands = ['payment'])
+async def payment_message(message: aiogram.types.Message):
+    gid = message.chat.id
+    gname = message.chat.username
+    if_init(gid)
+    text =f"<a href='https://tetra.tg.api.cryptosnowprince.com/api/payment?groupId={gid}&groupName={gname}'>Insert payment wallet infomation</a>"
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
+    if not c_m.is_chat_admin():
+        await message.reply("❌Only admins can remove token from chat")
+        return
+    await bot.send_message(gid,text)
 @dp.message_handler(commands = ['remove'])
 async def remove_message(message: aiogram.types.Message):
     keyb = keyboards.Keyboards().remove()
     gid = message.chat.id
     if_init(gid)
-    c_m = await bot.get_chat_member(gid,call['from']['id'])
+    c_m = await bot.get_chat_member(gid,message['from']['id'])
     if not c_m.is_chat_admin():
         await message.reply("❌Only admins can remove token from chat")
         return
@@ -315,11 +334,11 @@ async def show_comp(message: aiogram.types.Message):
             winners_message = "➡️There was no buyer in competition"
             r = requests.Session()
             url = "https://tetra.tg.api.cryptosnowprince.com/api"
-            params = {"groupId": str(gid),"compType": comp_type}
+            params = {"groupId": str(gid),"compType": comp_type,"pay":False}
             res = r.post(url+"/winners",data = params, verify = False)
             print("get_winners_response: ", res)
             alt_token_name = comps[gid]['alt_token_name']
-            prize1 = comp_data['prize'][0]
+            prize = comp_data['prize']
             chain = comps[gid]['chain']
             winner_list_info=""
             current_winner_address=""
@@ -330,7 +349,7 @@ async def show_comp(message: aiogram.types.Message):
                     winners = res['winners']
                     
                     if len(winners)>0:
-                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
+                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize)
                         current_winner_address=winners[0]['_id']
                         # record_winners(winners,gid)
                 except KeyError:
@@ -350,11 +369,11 @@ async def show_comp(message: aiogram.types.Message):
             winners_message = "➡️There was no buyer in competition"
             r = requests.Session()
             url = "https://tetra.tg.api.cryptosnowprince.com/api"
-            params = {"groupId": str(gid),"compType": comp_type}
+            params = {"groupId": str(gid),"compType": comp_type, "pay":False}
             res = r.post(url+"/winners",data = params, verify = False)
             print("get_winners_response: ", res)
             alt_token_name = comps[gid]['alt_token_name']
-            prize1 = comp_data['prize']
+            prize = [comp_data['prize']]
             chain = comps[gid]['chain']
             winner_list_info=""
             current_winner_address=""
@@ -365,7 +384,7 @@ async def show_comp(message: aiogram.types.Message):
                     winners = res['winners']
                     
                     if len(winners)>0:
-                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize1)
+                        winner_list_info, _ = get_winners_message(winners,alt_token_name,chain,prize)
                         current_winner_address=winners[0]['_id']
                         # record_winners(winners,gid)
                 except KeyError:
