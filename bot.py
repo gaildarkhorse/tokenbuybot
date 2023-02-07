@@ -674,6 +674,7 @@ async def handle_input(message: aiogram.types.Message):
                             if winners_info['address']==res['receipent'] and winners_info['prize']==res['amount'] and winners_info['alt_token_name']==res['symbol']:
                                 winner_hash = key
                                 comps[gid]['winners'][winner_hash]['pay_tx'] = message.text
+                                await bot.send_message(gid,f"🎊Congrats to <code>{winners_info['address']}</code>\n You received <code>{winners_info['prize']}{winners_info['alt_token_name']}</code> as prize")
                                 await show_winners(message)
                         if winner_hash=="":
                             await message.reply("❗️ Not found any payment info")
