@@ -172,14 +172,14 @@ initialcompvalue = {
                 "length":3,
                 "min_buy":0.1,
                 "must_hold":1,
-                "prize":[1,0.2,0.1],
+                "prize":[0.0001,0.0001,0.0001],
                 "start_time":0,
                 "end_time":0
             },
             "last_buy_comp":{
                 "countdown":3,
                 "min_buy":0.1,
-                "prize":1,
+                "prize":0.0001,
                 "must_hold":1,
                 "start_time":0,
                 "end_time":0,

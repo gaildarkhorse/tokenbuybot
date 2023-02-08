@@ -37,7 +37,7 @@ def get_winners_message(winners,alt_token_name,chain,prize):
         if 'pay_tx' in winner and winner['pay_tx']:
             pay_info = f"<a href ='{winner['pay_tx']}'>Payment Transaction</a>"
         else:
-            pay_info = "Waiting payment txn as proof.../winners"
+            pay_info = "All winners info... /winners"
 
             
         win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize[i]}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣{pay_info}\n"
@@ -84,9 +84,10 @@ def record_winners_pay_tx(gid):
             res = res['value']
             
             for key, val in res.items():
+                print(key, " -------- ", val)
                 if val=="":
                     continue
-                comps[gid]['winners'][key] = val
+                comps[gid]['winners'][key]['pay_tx'] = val
                 winner_info = comps[gid]['winners'][key]
                 comps[gid]['winners'][key]['pay_tx']=val
                 text += f"🎊Congrats to <code>{winner_info['address']}</code>\n You received <code>{winner_info['prize']}{winner_info['alt_token_name']}</code> as prize\n"                
@@ -233,8 +234,8 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                     image_fn.close()
                     comps[gid]['comp_text'] = comp_text
                     update_comps_write()
-                    res = BotAPI(gid, g_data).stop()
-                    print("stop_response :", res)
+                    # res = BotAPI(gid, g_data).stop()
+                    # print("stop_response :", res)
                     
 
             elif comp_type == "last_buy_comp":
@@ -268,6 +269,8 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
                     caption = f"{comp_text}\n\n📊<a href='{link_chart}'>Chart</a> ⚡️<a href='{link_event}'>Events</a>"
                     comps[gid]['comp_text'] = comp_text
                     update_comps_write()
+                    # res = BotAPI(gid, g_data).stop()
+                    # print("stop_response :", res)
                     await bot.edit_message_text(caption, gid, comp_info['message_id'])
                     await bot.forward_message(gid, gid, comp_info['message_id'])
 
@@ -306,7 +309,7 @@ async def payment_message(message: aiogram.types.Message):
     gid = message.chat.id
     gname = message.chat.username
     if_init(gid)
-    text =f"<a href='https://tetra.tg.api.cryptosnowprince.com/api/payment?groupId={gid}&groupName={gname}'>Insert payment wallet infomation</a>"
+    text =f"<a href='https://tetra.tg.api.cryptosnowprince.com?groupId={gid}&groupName={gname}'>Insert payment wallet infomation</a>"
     c_m = await bot.get_chat_member(gid,message['from']['id'])
     if not c_m.is_chat_admin():
         await message.reply("❌Only admins can remove token from chat")
@@ -457,7 +460,11 @@ async def show_winners(message: aiogram.types.Message):
     if_init(gid)
     reset_status(gid)
     winners = comps[gid]['winners']
+    token_address = comps[gid]['token_address']
     chain = comps[gid]['chain']
+    if not (token_address and chain):
+        await bot.send_message(gid, "❗️You must add token to chat first. Use /add command")
+        return
     domains = {
         "BSC": "https://bscscan.com",
         "ETH": "https://etherscan.io"
