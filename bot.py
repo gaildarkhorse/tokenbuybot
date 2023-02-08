@@ -34,10 +34,12 @@ def get_winners_message(winners,alt_token_name,chain,prize):
     
     for i, winner in enumerate(winners):
         winner_address = winners[i]['_id']
-        if winner['pay_tx']:
-            pay_info = "Waiting payment txn as proof.../winners"
+        if 'pay_tx' in winner and winner['pay_tx']:
+            pay_info = f"<a href ='{winner['pay_tx']}'>Payment Transaction</a>"
         else:
-            pay_info = f"<a href ='winner['pay_tx']'>Payment Transaction</a>"
+            pay_info = "Waiting payment txn as proof.../winners"
+
+            
         win_message += f"\n\n🎊Congrats to <code>{winner_address}</code>wins <code>{prize[i]}{alt_token_name}</code>\n🎖Winner address{winner_address}\n#️⃣{pay_info}\n"
 
     return winner_list_info, win_message
@@ -56,8 +58,44 @@ def record_winners(winners,gid):
             "alt_token_name":comps[gid]["alt_token_name"],
             "chain":comps[gid]["chain"],
             "comp_type":comps[gid]["comp_type"],
-            "pay_tx":winner['pay_tx']
+            "pay_tx":""
         }
+def record_winners_pay_tx(gid):
+    winners = comps[gid]['winners']
+    if not bool(winners):
+        return ""
+
+    params = {}
+    for key in winners.keys():
+        winner_hash = key
+        if comps[gid]['winners'][key]['pay_tx']=="":
+            params[key]=""
+    if not bool(params):
+        return ""
+    r = requests.Session()
+    url = "https://tetra.tg.api.cryptosnowprince.com/api/getPayInfoByHash"
+    res = r.post(url,data = params, verify=False)
+    print("getPayInfo_response :", res)
+    text = ""
+    if res.status_code == 200:
+        try:
+            res = res.json()
+            print("getPayInfo_response :", res)
+            res = res['value']
+            
+            for key, val in res.items():
+                if val=="":
+                    continue
+                comps[gid]['winners'][key] = val
+                winner_info = comps[gid]['winners'][key]
+                comps[gid]['winners'][key]['pay_tx']=val
+                text += f"🎊Congrats to <code>{winner_info['address']}</code>\n You received <code>{winner_info['prize']}{winner_info['alt_token_name']}</code> as prize\n"                
+        except KeyError:
+            print("get winners pay_tx: ", "data error")
+    else:
+        print("get winners pay_tx: ", "fail")
+    return text
+
 
 def run_continuously(interval=1):
     """Continuously run, while executing pending jobs at each
@@ -109,6 +147,7 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             g_data = comps[gid]
             chain = g_data['chain']
             token_address = g_data['token_address']
+            
             if not (token_address and chain and g_data['pair_address']):
                 continue
             
@@ -129,6 +168,9 @@ async def get_latest_buyinfo():#message: aiogram.types.Message=None):
             link_chart=f'https://poocoin.app/tokens/{token_address}'
             link_event=f'https://t.me/BuyBotTracker'
             
+            congrate_m = record_winners_pay_tx(gid)
+            if congrate_m:
+                await bot.send_message(gid,congrate_m)
             if g_data['show_buys_w/out_comp'] == "on" or g_data['ongoing'] == 'on':
                 emoji = g_data['buy_emoji']
                 params = {'groupId':gid}

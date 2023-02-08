@@ -1,11 +1,11 @@
 {
     "-1001661521028": {
         "status": "",
-        "chain": "BSC",
-        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
-        "token_name": "Cake",
-        "alt_token_name": "BNB",
-        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
         "show_buys_w/out_comp": "on",
         "gif_image": "0.jpg",
         "buy_emoji": "😄",
@@ -23,7 +23,7 @@
         "comp_text": "",
         "blacklist": {},
         "big_buy_comp": {
-            "length": 20,
+            "length": 1,
             "min_buy": 0.1,
             "must_hold": 1,
             "prize": [
@@ -31,17 +31,17 @@
                 0.2,
                 0.1
             ],
-            "start_time": 1675627381.629653,
+            "start_time": 1675860942.0474317,
             "end_time": 0
         },
         "last_buy_comp": {
-            "countdown": 3,
-            "min_buy": 0.1,
-            "prize": 1,
+            "countdown": 5,
+            "min_buy": 0.001,
+            "prize": 0.001,
             "must_hold": 1,
-            "start_time": 0,
+            "start_time": 1675860529.99898,
             "end_time": 0,
-            "message_id": 0
+            "message_id": 4335
         }
     },
     "5011624700": {
