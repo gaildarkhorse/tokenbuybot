@@ -1,1 +1,362 @@
-{}
+{
+    "-1001661521028": {
+        "status": "",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "off",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 5,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1675945023.490642,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "-1001887932311": {
+        "status": "",
+        "chain": "BSC",
+        "token_address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        "token_name": "Cake",
+        "alt_token_name": "BNB",
+        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "-1001887932311.png",
+        "buy_emoji": "😃",
+        "min_buy": 1,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 5,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1675945023.490642,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "5165020614": {
+        "status": "",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "off",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 5,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1675945023.490642,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "5023936303": {
+        "status": "",
+        "chain": "BSC",
+        "token_address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+        "token_name": "Cake",
+        "alt_token_name": "BNB",
+        "pair_address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "🏁Biggest Buy Competition Finished\n\n🕓 Start at <code>18:59:28 UTC</code>\n⏳Ends <code>19:09:28 UTC</code>\n⏫Minimum Buy <code>0.1</code>BNB\n➡️There was no buyer in competition",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 10,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1675969168.1010659,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "-638951071": {
+        "status": "",
+        "chain": "ETH",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 10,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1675969168.1010659,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "-825315072": {
+        "status": "",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 3,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 0,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 0,
+            "end_time": 0,
+            "message_id": 0
+        }
+    },
+    "-1001741273926": {
+        "status": "",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 30,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1676151053.3749409,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 1676127308.7865658,
+            "end_time": 0,
+            "message_id": 773
+        }
+    },
+    "5439075984": {
+        "status": "",
+        "chain": "",
+        "token_address": "",
+        "token_name": "",
+        "alt_token_name": "",
+        "pair_address": "",
+        "show_buys_w/out_comp": "on",
+        "gif_image": "0.jpg",
+        "buy_emoji": "😄",
+        "min_buy": 10,
+        "buy_step": 5,
+        "token_group_pref": {
+            "group_link": "",
+            "notify_whale_buy": "off",
+            "selected_chart": "PooCoin",
+            "circulating_supply": ""
+        },
+        "ongoing": "off",
+        "comp_type": "big_buy_comp",
+        "winners": {},
+        "comp_text": "",
+        "blacklist": {},
+        "big_buy_comp": {
+            "length": 30,
+            "min_buy": 0.1,
+            "must_hold": 1,
+            "prize": [
+                0.0001,
+                0.0001,
+                0.0001
+            ],
+            "start_time": 1676151053.3749409,
+            "end_time": 0
+        },
+        "last_buy_comp": {
+            "countdown": 3,
+            "min_buy": 0.1,
+            "prize": 0.0001,
+            "must_hold": 1,
+            "start_time": 1676127308.7865658,
+            "end_time": 0,
+            "message_id": 773
+        }
+    }
+}

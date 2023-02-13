@@ -3,15 +3,11 @@
 help_message="""
 Welcome to Tetra Trending Bot 
 
-- I am a Buy-Bot that features Trending (@TetraTrendingBot) and customizable games
-
-- To begin, make me an Admin @TetraTrendingBot in your Group
+- To begin, make me an Admin @tetratrending_bot in your Group
 
 - Type /add to start tracking your coin
 
 - Type /settings to show all available easy to use settings
-
-- Go Premium/Ad-Free by going to Premium Settings
 
 - Attach your telegram link by going to group settings
 
@@ -19,11 +15,12 @@ Welcome to Tetra Trending Bot
 
 - Type /winners to view all previous buy contests winners and add TXN as proof of payment
 
-- Type /info to view current token info and links
-
 - Type /remove to clear settings and competitions and remove the token from chat
 
-- MARKETING: @TetraTrendingBot
+- To make the auto payment to winners function enable use /payment command and set wallet info
+
+- Only group admins can operate almost all commands
+
 """
 
 remove_confirm_message = """
