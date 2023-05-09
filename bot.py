@@ -160,7 +160,7 @@ async def get_latest_buyinfo():  # message: aiogram.types.Message=None):
 
             if not (token_address and chain and g_data['pair_address']):
                 continue
-
+            # print("\nbuy -------- before info", g_data['min_buy'])
             comp_type = g_data['comp_type']
             comp_info = g_data[comp_type]
             length = comp_info[lengths[comp_type]]
@@ -174,11 +174,12 @@ async def get_latest_buyinfo():  # message: aiogram.types.Message=None):
             alt_token_name = g_data['alt_token_name']
             token_name = g_data['token_name']
             s_chart = g_data['token_group_pref']['selected_chart']
-            link_track = 'https://t.me/aiogrambottest2023'
+            link_track = 'https://t.me/tetratrending_bot'
             link_chart = f'https://poocoin.app/tokens/{token_address}'
             link_event = f'https://t.me/BuyBotTracker'
 
             congrate_m = record_winners_pay_tx(gid)
+            # print("\nbuy -------- sinfo", g_data['min_buy'])
             if congrate_m:
                 await bot.send_message(gid, congrate_m)
             if g_data['show_buys_w/out_comp'] == "on" or g_data['ongoing'] == 'on':
@@ -192,7 +193,11 @@ async def get_latest_buyinfo():  # message: aiogram.types.Message=None):
                         buy_info = res["event"]
                         print("get_lastbuy:", res)
 
+                        if bool(buy_info): print("buy info", bool(buy_info),float(buy_info['value']), g_data['min_buy'])
+                        print("buy info", g_data['min_buy'])
+
                         if bool(buy_info) and float(buy_info['value']) >= g_data['min_buy']:
+
                             link_buyer = f"https://{buyer_domain[chain]}/address/{buy_info['buyer_address']}"
                             link_txn = f"https://{buyer_domain[chain]}/tx/{buy_info['txn']}"
 
@@ -1197,6 +1202,7 @@ def update_comps_read():
             temp_dict[int(key)]["ongoing"] = "off"
             temp_dict[int(key)]["status"] = ""
             temp_dict[int(key)]["blacklist"] = {}
+            temp_dict[int(key)]["show_buys_w/out_comp"]="off"
 
         comps = temp_dict
         temp_dict = {}
